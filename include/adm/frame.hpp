@@ -6,7 +6,7 @@
 #include "adm/document.hpp"
 #include "adm/detail/named_option_helper.hpp"
 #include "adm/detail/named_type.hpp"
-#include "adm/libadm_export.h"
+#include "adm/export.h"
 #include "adm/serialized.hpp"
 
 namespace adm {
@@ -22,24 +22,24 @@ namespace adm {
      * The constructor is private. This way it is ensured, that an Frame
      * can only be created as a `std::shared_ptr`.
      */
-    LIBADM_EXPORT static std::shared_ptr<Frame> create(FrameStart start,
+    ADM_EXPORT static std::shared_ptr<Frame> create(FrameStart start,
                                                        FrameDuration duration,
                                                        FrameType frameType);
-    LIBADM_EXPORT static std::shared_ptr<Frame> create(FrameHeader frameHeader);
+    ADM_EXPORT static std::shared_ptr<Frame> create(FrameHeader frameHeader);
 
     /// @brief FrameStart getter
-    LIBADM_EXPORT FrameStart start() const;
+    ADM_EXPORT FrameStart start() const;
     /// @brief FrameDuration getter
-    LIBADM_EXPORT FrameDuration duration() const;
+    ADM_EXPORT FrameDuration duration() const;
 
     /**
      * @brief Create a copy of the Frame including all elements
      */
-    LIBADM_EXPORT std::shared_ptr<Frame> deepCopy() const;
+    ADM_EXPORT std::shared_ptr<Frame> deepCopy() const;
 
     /// @brief FrameHeader getter
-    LIBADM_EXPORT const FrameHeader &frameHeader() const;
-    LIBADM_EXPORT FrameHeader &frameHeader();
+    ADM_EXPORT const FrameHeader &frameHeader() const;
+    ADM_EXPORT FrameHeader &frameHeader();
 
     /** @name Add Add ADM elements
      *
@@ -48,21 +48,21 @@ namespace adm {
      */
     ///@{
     /// @brief Add an AudioProgramme
-    LIBADM_EXPORT bool add(std::shared_ptr<AudioProgramme> programme);
+    ADM_EXPORT bool add(std::shared_ptr<AudioProgramme> programme);
     /// @brief Add an AudioContent
-    LIBADM_EXPORT bool add(std::shared_ptr<AudioContent> content);
+    ADM_EXPORT bool add(std::shared_ptr<AudioContent> content);
     /// @brief Add an AudioObject
-    LIBADM_EXPORT bool add(std::shared_ptr<AudioObject> object);
+    ADM_EXPORT bool add(std::shared_ptr<AudioObject> object);
     /// @brief Add an AudioPackFormat
-    LIBADM_EXPORT bool add(std::shared_ptr<AudioPackFormat> packFormat);
+    ADM_EXPORT bool add(std::shared_ptr<AudioPackFormat> packFormat);
     /// @brief Add an AudioChannelFormat
-    LIBADM_EXPORT bool add(std::shared_ptr<AudioChannelFormat> channelFormat);
+    ADM_EXPORT bool add(std::shared_ptr<AudioChannelFormat> channelFormat);
     /// @brief Add an AudioStreamFormat
-    LIBADM_EXPORT bool add(std::shared_ptr<AudioStreamFormat> streamFormat);
+    ADM_EXPORT bool add(std::shared_ptr<AudioStreamFormat> streamFormat);
     /// @brief Add an AudioTrackFormat
-    LIBADM_EXPORT bool add(std::shared_ptr<AudioTrackFormat> trackFormat);
+    ADM_EXPORT bool add(std::shared_ptr<AudioTrackFormat> trackFormat);
     /// @brief Add an AudioTrackUid
-    LIBADM_EXPORT bool add(std::shared_ptr<AudioTrackUid> trackUid);
+    ADM_EXPORT bool add(std::shared_ptr<AudioTrackUid> trackUid);
     ///@}
 
     /**
@@ -185,31 +185,31 @@ namespace adm {
     ///@}
 
    private:
-    LIBADM_EXPORT Frame(FrameStart start, FrameDuration duration,
+    ADM_EXPORT Frame(FrameStart start, FrameDuration duration,
                         FrameType frameType);
-    LIBADM_EXPORT Frame(FrameHeader frameHeader);
-    LIBADM_EXPORT Frame(const Frame &) = default;
-    LIBADM_EXPORT Frame(Frame &&) = default;
+    ADM_EXPORT Frame(FrameHeader frameHeader);
+    ADM_EXPORT Frame(const Frame &) = default;
+    ADM_EXPORT Frame(Frame &&) = default;
     //
-    // LIBADM_EXPORT ElementRange<const AudioProgramme> &getElements(
+    // ADM_EXPORT ElementRange<const AudioProgramme> &getElements(
     //     detail::ParameterTraits<AudioProgramme>::tag) const;
-    // LIBADM_EXPORT ElementRange<const AudioContent>
+    // ADM_EXPORT ElementRange<const AudioContent>
     //     &getElements(detail::ParameterTraits<AudioContent>::tag) const;
-    // LIBADM_EXPORT ElementRange<const AudioObject>
+    // ADM_EXPORT ElementRange<const AudioObject>
     //     &getElements(detail::ParameterTraits<AudioObject>::tag) const;
-    // LIBADM_EXPORT ElementRange<const AudioPackFormat>
+    // ADM_EXPORT ElementRange<const AudioPackFormat>
     //     &getElements(detail::ParameterTraits<AudioPackFormat>::tag)
     //     const;
-    // LIBADM_EXPORT ElementRange<const AudioChannelFormat>
+    // ADM_EXPORT ElementRange<const AudioChannelFormat>
     //     &getElements(
     //         detail::ParameterTraits<AudioChannelFormat>::tag) const;
-    // LIBADM_EXPORT ElementRange<const AudioStreamFormat>
+    // ADM_EXPORT ElementRange<const AudioStreamFormat>
     //     getElements(detail::ParameterTraits<AudioStreamFormat>::tag)
     //     const;
-    // LIBADM_EXPORT ElementRange<const AudioTrackFormat>
+    // ADM_EXPORT ElementRange<const AudioTrackFormat>
     //     &getElements(detail::ParameterTraits<AudioTrackFormat>::tag)
     //     const;
-    // LIBADM_EXPORT ElementRange<const AudioTrackUid>
+    // ADM_EXPORT ElementRange<const AudioTrackUid>
     //     &getElements(detail::ParameterTraits<AudioTrackUid>::tag) const;
 
     std::shared_ptr<Document> audioFormatExtended_;

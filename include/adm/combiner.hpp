@@ -4,18 +4,18 @@
 #include "adm/frame.hpp"
 #include <memory>
 #include <map>
-#include "adm/libadm_export.h"
+#include "adm/export.h"
 
 namespace adm {
 
   class Combiner {
    public:
-    LIBADM_EXPORT Combiner();
+    ADM_EXPORT Combiner();
 
-    LIBADM_EXPORT void push(std::shared_ptr<const Frame> frame);
+    ADM_EXPORT void push(std::shared_ptr<const Frame> frame);
 
-    LIBADM_EXPORT std::shared_ptr<Document> getDocument();
-    LIBADM_EXPORT TransportTrackFormat getTransportTrackFormat();
+    ADM_EXPORT std::shared_ptr<Document> getDocument();
+    ADM_EXPORT TransportTrackFormat getTransportTrackFormat();
 
    private:
     void updateDocument(std::shared_ptr<const Frame> frame);

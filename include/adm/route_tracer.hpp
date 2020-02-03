@@ -17,6 +17,10 @@ namespace adm {
                          std::shared_ptr<const AudioTrackUid>) {
         return false;
       }
+      bool shouldRecurse(std::shared_ptr<const AudioStreamFormat>,
+                         std::shared_ptr<const AudioChannelFormat>) {
+        return false;
+      }
       template <typename Element>
       bool shouldAdd(std::shared_ptr<Element>) {
         return true;
@@ -176,9 +180,14 @@ namespace adm {
         for (auto& weak_subtrack :
              audioStreamFormat->getAudioTrackFormatReferences()) {
           auto subtrack = weak_subtrack.lock();
-          if (this->shouldRecurse(audioStreamFormat, subtrack)) {
+          if (subtrack && this->shouldRecurse(audioStreamFormat, subtrack)) {
             trace(subpack, admRoute);
           }
+        }
+
+        auto subchannel = audioStreamFormat->getReference<AudioChannelFormat>();
+        if (subchannel && this->shouldRecurse(audioStreamFormat, subchannel)) {
+          trace(subchannel, admRoute);
         }
       }
 
@@ -187,7 +196,7 @@ namespace adm {
   }  // namespace detail
 
   /**
-   * @brief Creates Routes
+   * @brief Creates `adm::Route`s
    *
    * This implementation traces the following route:
    *
@@ -200,8 +209,8 @@ namespace adm {
    * Complementary AudioObjects are not interpreted as such. Hence for
    * every complementary audioObject an Route will be returned.
    *
-   * @warning: If the ADM structure contains a reference cycle, trace
-   * will get stuck in an infinite loop.
+   * @warning If the ADM structure contains a reference cycle, trace will get
+   * stuck in an infinite loop.
    */
   using RouteTracer =
       detail::GenericRouteTracer<Route, detail::DefaultFullDepthStrategy>;

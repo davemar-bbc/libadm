@@ -7,8 +7,8 @@
 namespace adm {
 
   std::chrono::nanoseconds parseTimecode(const std::string& timecode) {
-    const std::regex frameFormat("(\\d{2}):(\\d{2}):(\\d{2}):(\\d{2})");
-    const std::regex commonFormat("(\\d{2}):(\\d{2}):(\\d{2}).(\\d{1,9})");
+    const static std::regex frameFormat("(\\d{2}):(\\d{2}):(\\d{2}):(\\d{2})");
+    const static std::regex commonFormat("(\\d{2}):(\\d{2}):(\\d{2}).(\\d{1,9})");
     std::smatch timecodeMatch;
     if (std::regex_match(timecode, timecodeMatch, commonFormat)) {
       // add trailing zeros to string

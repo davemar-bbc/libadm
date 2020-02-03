@@ -5,7 +5,7 @@
 #include <string>
 #include "adm/detail/named_option_helper.hpp"
 #include "adm/detail/named_type.hpp"
-#include "adm/libadm_export.h"
+#include "adm/export.h"
 
 namespace adm {
 
@@ -60,7 +60,7 @@ namespace adm {
     bool isDefault() const;
 
     /// @brief Set value
-    LIBADM_EXPORT void set(FrameFormatIdValue value);
+    ADM_EXPORT void set(FrameFormatIdValue value);
 
     /**
      * @brief ADM parameter unset template
@@ -78,8 +78,8 @@ namespace adm {
      *
      * Compares the string representation of the FrameFormatId.
      */
-    LIBADM_EXPORT bool operator==(const FrameFormatId& other) const;
-    LIBADM_EXPORT bool operator<(const FrameFormatId& other) const;
+    ADM_EXPORT bool operator==(const FrameFormatId& other) const;
+    ADM_EXPORT bool operator<(const FrameFormatId& other) const;
     ///@}
 
     /**
@@ -88,13 +88,13 @@ namespace adm {
     void print(std::ostream& os) const;
 
    private:
-    LIBADM_EXPORT FrameFormatIdValue
+    ADM_EXPORT FrameFormatIdValue
         get(detail::ParameterTraits<FrameFormatIdValue>::tag) const;
 
-    LIBADM_EXPORT bool has(
+    ADM_EXPORT bool has(
         detail::ParameterTraits<FrameFormatIdValue>::tag) const;
 
-    LIBADM_EXPORT bool isDefault(
+    ADM_EXPORT bool isDefault(
         detail::ParameterTraits<FrameFormatIdValue>::tag) const;
 
     template <typename Tag>
@@ -102,7 +102,7 @@ namespace adm {
       return false;
     }
 
-    LIBADM_EXPORT void unset(detail::ParameterTraits<FrameFormatIdValue>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<FrameFormatIdValue>::tag);
 
     boost::optional<FrameFormatIdValue> value_;
 
@@ -112,9 +112,9 @@ namespace adm {
   // ---- Free functions ---- //
 
   /// @brief Parse an FrameFormatId string and convert it into an object
-  LIBADM_EXPORT FrameFormatId parseFrameFormatId(const std::string& id);
+  ADM_EXPORT FrameFormatId parseFrameFormatId(const std::string& id);
   /// @brief Format an formatId object as string
-  LIBADM_EXPORT std::string formatId(FrameFormatId id);
+  ADM_EXPORT std::string formatId(FrameFormatId id);
 
   // ---- Implementation ---- //
   template <typename... Parameters>

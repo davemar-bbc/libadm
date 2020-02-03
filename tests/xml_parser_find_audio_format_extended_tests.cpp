@@ -1,33 +1,17 @@
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/assert.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <catch2/catch.hpp>
 #include <sstream>
-#include "adm/xml_reader.hpp"
+#include "adm/parse.hpp"
 
-#define BOOST_TEST_MODULE ParseAdm
-#include <boost/test/included/unit_test.hpp>
+TEST_CASE("xml_parser/find_audio_format_extended_ebu") {
+  adm::parseXml("xml_parser/find_audio_format_extended_ebu.xml");
+}
 
-BOOST_AUTO_TEST_CASE(find_audio_format_extended) {
-  {
-    std::istringstream admStream(
-        "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-        "<ituADM>"
-        "<audioFormatExtended>"
-        "</audioFormatExtended>"
-        "</ituADM>");
-    adm::parseXml(admStream);
-  }
-  {
-    std::istringstream admStream(
-        "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-        "<ebuCoreMain>"
-        "<coreMetadata>"
-        "<format>"
-        "<audioFormatExtended>"
-        "</audioFormatExtended>"
-        "</format>"
-        "</coreMetadata>"
-        "</ebuCoreMain>");
-    adm::parseXml(admStream);
-  }
+TEST_CASE("find_audio_format_extended_itu") {
+  adm::parseXml("xml_parser/find_audio_format_extended_itu.xml",
+                adm::xml::ParserOptions::recursive_node_search);
+}
+
+TEST_CASE("xml_parser/find_audio_format_extended_ebu_with_other_metadata") {
+  adm::parseXml(
+      "xml_parser/find_audio_format_extended_ebu_with_other_metadata.xml");
 }

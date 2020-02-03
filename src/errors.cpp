@@ -1,30 +1,58 @@
-#include <adm/errors.hpp>
+#include "adm/errors.hpp"
 #include <boost/format.hpp>
 
 namespace adm {
   namespace error {
 
-    void AudioObjectReferenceCycle::formatMessage() {
-      msg_ = boost::str(
+    AdmException::AdmException(const std::string& msg)
+        : std::runtime_error(msg) {}
+
+    AdmGenericRuntimeError::AdmGenericRuntimeError(const std::string& msg)
+        : AdmException(msg) {}
+
+    AudioObjectReferenceCycle::AudioObjectReferenceCycle(
+        const AudioObjectId& referent, const AudioObjectId& reference)
+        : AdmException(formatMessage(referent, reference)) {}
+
+    std::string AudioObjectReferenceCycle::formatMessage(
+        AudioObjectId referent, AudioObjectId reference) const {
+      return boost::str(
           boost::format(
-              "Cyclic AudioObject reference detectet from %1% to %2%") %
-          formatId(referent_) % formatId(reference_));
+              "Cyclic AudioObject reference detected from %1% to %2%") %
+          formatId(referent) % formatId(reference));
     }
 
-    XmlParsingError::XmlParsingError(int line) : line_(line) {
-      msg_ = boost::str(boost::format("Error parsinge XML (:%1%)") % line_);
-    }
+    XmlParsingError::XmlParsingError(const std::string& message,
+                                     boost::optional<int> line)
+        : AdmException(formatMessage(message, line)), line_(line) {}
 
-    std::string XmlParsingError::formatMessageWithLine(
-        const std::string& message) {
-      return boost::str(boost::format("%1% (:%2%)") % message % line_);
+    XmlParsingError::XmlParsingError(int line)
+        : XmlParsingError(formatMessage("Error parsing XML", line)) {}
+
+    std::string XmlParsingError::formatMessage(
+        const std::string& message, boost::optional<int> line) const {
+      if (line) {
+        return boost::str(boost::format("%1% (:%2%)") % message % line.get());
+      } else {
+        return message;
+      }
     }
 
     XmlParsingDuplicateId::XmlParsingDuplicateId(const std::string& id,
-                                                 int line)
-        : XmlParsingError(line) {
-      auto msg = boost::str(boost::format("Duplicate Id %1% found") % id);
-      message(msg);
+                                                 boost::optional<int> line)
+        : XmlParsingError(formatMessage(id), line) {}
+
+    std::string XmlParsingDuplicateId::formatMessage(const std::string& id) {
+      return boost::str(boost::format("Duplicate Id %1% found") % id);
+    }
+
+    XmlParsingUnresolvedReference::XmlParsingUnresolvedReference(
+        const std::string& id)
+        : XmlParsingError(formatMessage(id)) {}
+
+    std::string XmlParsingUnresolvedReference::formatMessage(
+        const std::string& id) {
+      return boost::str(boost::format("Id %1% could not be resolved") % id);
     }
 
   }  // namespace error

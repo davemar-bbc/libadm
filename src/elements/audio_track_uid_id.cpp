@@ -19,7 +19,7 @@ namespace adm {
   // ---- Has ---- //
   bool AudioTrackUidId::has(
       detail::ParameterTraits<AudioTrackUidIdValue>::tag) const {
-    return value_ != boost::none;
+    return true;
   }
 
   // ---- isDefault ---- //
@@ -58,7 +58,7 @@ namespace adm {
   }
 
   AudioTrackUidId parseAudioTrackUidId(const std::string& id) {
-    const std::regex r("ATU_([0-9a-fA-F]{8})");
+    const static std::regex r("ATU_([0-9a-fA-F]{8})");
     std::smatch idMatch;
     if (std::regex_match(id, idMatch, r)) {
       auto value = detail::parseHexValue(idMatch[1], 8);

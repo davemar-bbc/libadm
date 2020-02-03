@@ -1,69 +1,45 @@
-#include <boost/mpl/assert.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <catch2/catch.hpp>
 #include "adm/document.hpp"
-#include "adm/frame.hpp"
 #include "adm/elements.hpp"
 #include "adm/utilities/id_assignment.hpp"
 #include "adm/utilities/object_creation.hpp"
-#include "adm/xml_writer.hpp"
-#include <iostream>
-
-#define BOOST_TEST_MODULE XmlWriter
-#include <boost/test/included/unit_test.hpp>
-#include <boost/test/output_test_stream.hpp>
+#include "adm/write.hpp"
+#include "helper/file_comparator.hpp"
 
 std::shared_ptr<const adm::Document> createSimpleScene();
-std::shared_ptr<const adm::Frame> createSimpleFrame();
 
-BOOST_AUTO_TEST_CASE(default_options) {
+TEST_CASE("simple_scene_default") {
   using namespace adm;
-  auto doc = createSimpleScene();
+  auto document = createSimpleScene();
   // with ebu core wrapper structure
-  boost::test_tools::output_test_stream outputEbu(
-      "test_data/xml_writer_simple_scene_ebu.xml", true);
-  writeXml(outputEbu, doc);
-
-  BOOST_TEST(outputEbu.match_pattern(false));
+  std::stringstream xml;
+  writeXml(xml, document);
+  CHECK_THAT(xml.str(), EqualsXmlFile("simple_scene_default"));
 }
 
-BOOST_AUTO_TEST_CASE(itu_envelope) {
+TEST_CASE("simple_scene_itu") {
   using namespace adm;
-  auto doc = createSimpleScene();
+  auto document = createSimpleScene();
 
-  // with ITU wrapper structure
-  boost::test_tools::output_test_stream outputItu(
-      "test_data/xml_writer_simple_scene_itu.xml", true);
-  writeXml(outputItu, doc,
+  std::stringstream xml;
+  writeXml(xml, document,
            xml::WriterOptions::write_default_values |
                xml::WriterOptions::itu_structure);
 
-  BOOST_TEST(outputItu.match_pattern(false));
+  CHECK_THAT(xml.str(), EqualsXmlFile("simple_scene_itu"));
 }
 
-BOOST_AUTO_TEST_CASE(write_optional_defaults) {
+TEST_CASE("write_optional_defaults") {
   using namespace adm;
-  auto doc = createSimpleScene();
+  auto document = createSimpleScene();
 
-  boost::test_tools::output_test_stream output(
-      "test_data/xml_writer_simple_scene_defaults.xml", true);
-  writeXml(output, doc, xml::WriterOptions::write_default_values);
+  std::stringstream xml;
+  writeXml(xml, document, xml::WriterOptions::write_default_values);
 
-  BOOST_TEST(output.match_pattern(false));
+  CHECK_THAT(xml.str(), EqualsXmlFile("write_optional_defaults"));
 }
 
-BOOST_AUTO_TEST_CASE(write_frame) {
-  using namespace adm;
-  auto frame = createSimpleFrame();
-
-  boost::test_tools::output_test_stream output(
-      "test_data/xml_writer_simple_frame.xml", true);
-  writeXml(output, frame);
-
-  BOOST_TEST(output.match_pattern(false));
-}
-
-BOOST_AUTO_TEST_CASE(write_complementary_audio_objects) {
+TEST_CASE("write_complementary_audio_objects") {
   using namespace adm;
 
   auto audioObjectDefault = AudioObject::create(AudioObjectName("Default"));
@@ -75,16 +51,15 @@ BOOST_AUTO_TEST_CASE(write_complementary_audio_objects) {
   auto document = Document::create();
   document->add(audioObjectDefault);
 
-  boost::test_tools::output_test_stream output(
-      "test_data/xml_writer_complementary_audio_objects.xml", true);
-  writeXml(output, document);
+  std::stringstream xml;
+  writeXml(xml, document);
 
-  BOOST_TEST(output.match_pattern(false));
+  CHECK_THAT(xml.str(), EqualsXmlFile("write_complementary_audio_objects"));
 }
 
 std::shared_ptr<const adm::Document> createSimpleScene() {
   using namespace adm;
-  auto doc = Document::create();
+  auto document = Document::create();
   auto start = Start(parseTimecode("10:00:00.0"));
   auto end = End(parseTimecode("10:00:10.0"));
   auto programme =
@@ -108,48 +83,8 @@ std::shared_ptr<const adm::Document> createSimpleScene() {
   channel->add(AudioBlockFormatObjects(SphericalPosition(Azimuth(30)),
                                        Rtime(std::chrono::seconds(9))));
 
-  doc->add(programme);
-  reassignIds(doc);
+  document->add(programme);
+  reassignIds(document);
 
-  return doc;
-}
-
-std::shared_ptr<const adm::Frame> createSimpleFrame() {
-  using namespace adm;
-
-  auto admFrame = Frame::create(FrameStart(std::chrono::nanoseconds(0)),
-                                FrameDuration(std::chrono::nanoseconds(1)),
-                                FrameType("full"));
-  auto start = Start(parseTimecode("00:00:00.0"));
-  auto end = End(parseTimecode("00:00:10.0"));
-  auto programme =
-      AudioProgramme::create(AudioProgrammeName("Main"), start, end);
-  auto content = AudioContent::create(AudioContentName("Main"));
-  programme->addReference(content);
-
-  auto result = createSimpleObject("MainObject");
-  content->addReference(result.audioObject);
-
-  auto channel = result.audioChannelFormat;
-  channel->add(AudioBlockFormatObjects(SphericalPosition(Azimuth(30)),
-                                       Rtime(std::chrono::seconds(0)),
-                                       JumpPosition(JumpPositionFlag(true))));
-  channel->add(AudioBlockFormatObjects(
-      SphericalPosition(Azimuth(-30)), Rtime(std::chrono::seconds(3)),
-      JumpPosition(JumpPositionFlag(true),
-                   InterpolationLength(std::chrono::seconds(1)))));
-  channel->add(AudioBlockFormatObjects(SphericalPosition(Azimuth(0)),
-                                       Rtime(std::chrono::seconds(6))));
-  channel->add(AudioBlockFormatObjects(SphericalPosition(Azimuth(30)),
-                                       Rtime(std::chrono::seconds(9))));
-  admFrame->add(programme);
-  reassignIds(admFrame);
-
-  auto trackFormat = TransportTrackFormat();
-  AudioTrack audioTrack(TrackId(1));
-  audioTrack.add(result.audioTrackUid->get<AudioTrackUidId>());
-  trackFormat.add(audioTrack);
-  admFrame->frameHeader().add(trackFormat);
-
-  return admFrame;
+  return document;
 }

@@ -6,6 +6,8 @@
 #include <vector>
 #include "adm/document.hpp"
 #include "adm/elements.hpp"
+#include "adm/errors.hpp"
+#include "adm/parse.hpp"
 #include "rapidxml/rapidxml.hpp"
 #include "rapidxml/rapidxml_utils.hpp"
 
@@ -44,18 +46,23 @@ namespace adm {
     SpeakerPosition parseSpeakerPosition(std::vector<NodePtr> node);
     SpeakerLabel parseSpeakerLabel(NodePtr node);
 
+    NodePtr findAudioFormatExtendedNodeEbuCore(NodePtr root);
+    NodePtr findAudioFormatExtendedNodeFullRecursive(NodePtr root);
+
     class XmlParser {
      public:
-      XmlParser(const std::string& filename);
-      XmlParser(std::istream& stream);
+      XmlParser(const std::string& filename,
+                ParserOptions options = ParserOptions::none,
+                std::shared_ptr<Document> destDocument = Document::create());
+      XmlParser(std::istream& stream,
+                ParserOptions options = ParserOptions::none,
+                std::shared_ptr<Document> destDocument = Document::create());
 
       std::shared_ptr<Document> parse();
 
       bool hasUnresolvedReferences();
 
      private:
-      NodePtr findAudioFormatExtendedNode(NodePtr root);
-
       std::shared_ptr<AudioProgramme> parseAudioProgramme(NodePtr node);
       std::shared_ptr<AudioContent> parseAudioContent(NodePtr node);
       std::shared_ptr<AudioObject> parseAudioObject(NodePtr node);
@@ -66,6 +73,7 @@ namespace adm {
       std::shared_ptr<AudioChannelFormat> parseAudioChannelFormat(NodePtr node);
 
       rapidxml::file<> xmlFile_;
+      ParserOptions options_;
       std::shared_ptr<Document> document_;
 
       // clang-format off
@@ -88,7 +96,11 @@ namespace adm {
       void resolveReferences(std::map<Src, std::vector<TargetId>> map) {
         for (auto entry : map) {
           for (auto id : entry.second) {
-            entry.first->addReference(document_->lookup(id));
+            if (auto element = document_->lookup(id)) {
+              entry.first->addReference(element);
+            } else {
+              throw error::XmlParsingUnresolvedReference(formatId(id));
+            }
           }
         }
       }
@@ -96,7 +108,12 @@ namespace adm {
       template <typename Src, typename Target>
       void resolveReference(std::map<Src, Target> map) {
         for (auto entry : map) {
-          entry.first->setReference(document_->lookup(entry.second));
+          auto id = entry.second;
+          if (auto element = document_->lookup(id)) {
+            entry.first->setReference(element);
+          } else {
+            throw error::XmlParsingUnresolvedReference(formatId(id));
+          }
         }
       }
     };

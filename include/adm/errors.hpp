@@ -1,56 +1,78 @@
 #pragma once
 #include <stdexcept>
+#include <boost/format.hpp>
+#include <boost/optional.hpp>
 #include <adm/elements/audio_object_id.hpp>
-#include "adm/libadm_export.h"
+#include "adm/export.h"
 
 namespace adm {
   namespace error {
 
-    class LIBADM_EXPORT AdmException : public std::exception {};
-
-    class LIBADM_EXPORT AudioObjectReferenceCycle : public AdmException {
+    class ADM_EXPORT AdmException : public std::runtime_error {
      public:
-      AudioObjectReferenceCycle(AudioObjectId referent, AudioObjectId reference)
-          : referent_(referent), reference_(reference) {
-        formatMessage();
-      }
-      AudioObjectId reference() const { return reference_; }
-      AudioObjectId referent() const { return referent_; }
+      explicit AdmException(const std::string& msg);
+    };
 
-      const char* what() const noexcept override { return msg_.c_str(); }
+    class ADM_EXPORT AdmGenericRuntimeError : public AdmException {
+     public:
+      explicit AdmGenericRuntimeError(const std::string& msg);
+    };
+
+    class ADM_EXPORT AudioObjectReferenceCycle : public AdmException {
+     public:
+      explicit AudioObjectReferenceCycle(const AudioObjectId& referent,
+                                         const AudioObjectId& reference);
 
      private:
-      void formatMessage();
+      std::string formatMessage(AudioObjectId referent,
+                                AudioObjectId reference) const;
       AudioObjectId referent_;
       AudioObjectId reference_;
-      std::string msg_;
     };
 
-    class LIBADM_EXPORT XmlParsingError : public AdmException {
+    class ADM_EXPORT XmlParsingError : public AdmException {
      public:
-      XmlParsingError(const std::string& message, int line)
-          : line_(line), msg_(formatMessageWithLine(message)) {}
+      XmlParsingError(const std::string& message,
+                      boost::optional<int> line = boost::none);
       XmlParsingError(int line);
 
-      const char* what() const noexcept override { return msg_.c_str(); }
+     private:
+      std::string formatMessage(const std::string& message,
+                                boost::optional<int> line) const;
 
-     protected:
-      void message(const std::string& message) {
-        msg_ = formatMessageWithLine(message);
-      }
-      int line() const { return line_; }
+      boost::optional<int> line_;
+    };
+
+    class ADM_EXPORT XmlParsingDuplicateId : public XmlParsingError {
+     public:
+      XmlParsingDuplicateId(const std::string& id, boost::optional<int> line);
 
      private:
-      std::string formatMessageWithLine(const std::string& message);
-
-      int line_;
-      std::string msg_;
+      std::string formatMessage(const std::string& id);
     };
 
-    class LIBADM_EXPORT XmlParsingDuplicateId : public XmlParsingError {
+    class ADM_EXPORT XmlParsingUnresolvedReference : public XmlParsingError {
      public:
-      XmlParsingDuplicateId(const std::string& id, int line = -1);
+      XmlParsingUnresolvedReference(const std::string& id);
+
+     private:
+      std::string formatMessage(const std::string& id);
     };
+
+    namespace detail {
+
+      /**
+       * @brief Helper to construct an Exception with a formatted message
+       * that includes the Id of an ADM element that is related to the error at
+       * hand.
+       */
+      template <typename ElementId>
+      AdmGenericRuntimeError formatElementRuntimeError(
+          ElementId id, const std::string& message) {
+        return AdmGenericRuntimeError(formatId(id) + ": " + message);
+      }
+
+    }  // namespace detail
 
   }  // namespace error
 }  // namespace adm

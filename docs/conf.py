@@ -25,9 +25,9 @@ copyright = '2018, Institut für Rundfunktechnik GmbH'
 author = 'Institut für Rundfunktechnik GmbH'
 
 # The short X.Y version
-version = '0.9'
+version = '0.10'
 # The full version, including alpha/beta/rc tags
-release = '0.9.0'
+release = '0.10.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -39,7 +39,7 @@ release = '0.9.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['breathe']
+extensions = ['breathe', 'm2r']
 breathe_projects = {'libadm': '.build/doxygenxml/'}
 breathe_default_project = 'libadm'
 breathe_default_members = ('members', 'undoc-members')

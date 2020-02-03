@@ -79,7 +79,7 @@ namespace adm {
    */
   class Segmenter {
    public:
-    LIBADM_EXPORT Segmenter(std::shared_ptr<Document> document);
+    ADM_EXPORT Segmenter(std::shared_ptr<Document> document);
 
     /**
      * @brief add a TransportTrackFormat
@@ -87,7 +87,7 @@ namespace adm {
      * This TransportTrackFormat will be present in all generated/segmented
      * `Frame`s.
      */
-    LIBADM_EXPORT void addTransportTrackFormat(
+    ADM_EXPORT void addTransportTrackFormat(
         const TransportTrackFormat& transportTrackFormat);
     /**
      * @brief Get an Frame with the given interval
@@ -97,7 +97,7 @@ namespace adm {
      * Similar to the Start and Duration of an AudioObject SegmentStart and
      * SegmentDuration are relative to the Start of the file.
      */
-    LIBADM_EXPORT std::shared_ptr<Frame> getFrame(SegmentStart start,
+    ADM_EXPORT std::shared_ptr<Frame> getFrame(SegmentStart start,
                                                   SegmentDuration segDuration);
 
    private:

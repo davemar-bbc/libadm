@@ -5,7 +5,7 @@
 #include <string>
 #include "adm/detail/named_option_helper.hpp"
 #include "adm/detail/named_type.hpp"
-#include "adm/libadm_export.h"
+#include "adm/export.h"
 
 namespace adm {
 
@@ -59,7 +59,7 @@ namespace adm {
     bool isDefault() const;
 
     /// @brief Set value
-    LIBADM_EXPORT void set(TransportIdValue value);
+    ADM_EXPORT void set(TransportIdValue value);
 
     /**
      * @brief ADM parameter unset template
@@ -77,8 +77,8 @@ namespace adm {
      *
      * Compares the string representation of the TransportId.
      */
-    LIBADM_EXPORT bool operator==(const TransportId& other) const;
-    LIBADM_EXPORT bool operator<(const TransportId& other) const;
+    ADM_EXPORT bool operator==(const TransportId& other) const;
+    ADM_EXPORT bool operator<(const TransportId& other) const;
     ///@}
 
     /**
@@ -87,13 +87,13 @@ namespace adm {
     void print(std::ostream& os) const;
 
    private:
-    LIBADM_EXPORT TransportIdValue
+    ADM_EXPORT TransportIdValue
         get(detail::ParameterTraits<TransportIdValue>::tag) const;
 
-    LIBADM_EXPORT bool has(
+    ADM_EXPORT bool has(
         detail::ParameterTraits<TransportIdValue>::tag) const;
 
-    LIBADM_EXPORT bool isDefault(
+    ADM_EXPORT bool isDefault(
         detail::ParameterTraits<TransportIdValue>::tag) const;
 
     template <typename Tag>
@@ -101,7 +101,7 @@ namespace adm {
       return false;
     }
 
-    LIBADM_EXPORT void unset(detail::ParameterTraits<TransportIdValue>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<TransportIdValue>::tag);
 
     boost::optional<TransportIdValue> value_;
 
@@ -112,9 +112,9 @@ namespace adm {
 
   /// @brief Parse an TransportId string and convert it into an
   /// object
-  LIBADM_EXPORT TransportId parseTransportId(const std::string& id);
+  ADM_EXPORT TransportId parseTransportId(const std::string& id);
   /// @brief Format an TransportId object as string
-  LIBADM_EXPORT std::string formatId(TransportId id);
+  ADM_EXPORT std::string formatId(TransportId id);
 
   // ---- Implementation ---- //
   template <typename... Parameters>

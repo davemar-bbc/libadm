@@ -47,18 +47,18 @@ namespace adm {
   // ---- Common ---- //
   void FrameFormatId::print(std::ostream& os) const {
     os << boost::str(boost::format("FF_%1%") %
-                     detail::formatHexValue(get<FrameFormatIdValue>().get()));
+                     detail::formatHexValue(get<FrameFormatIdValue>().get(), 11));
   }
 
   FrameFormatId parseFrameFormatId(const std::string& id) {
-    const std::regex r("FF_([0-9]{11})");
+    const std::regex r("FF_([0-9a-fA-F]{11})");
     std::smatch idMatch;
     if (std::regex_match(id, idMatch, r)) {
-      auto value = detail::parseHexValue(idMatch[1], 4);
+      auto value = detail::parseHexValue(idMatch[1], 11);
       return FrameFormatId(FrameFormatIdValue(value));
     } else {
       std::stringstream errorString;
-      errorString << "invalid FrameFormatId: " << id;
+      errorString << "invalid FrameFormatID: " << id;
       throw std::runtime_error(errorString.str());
     }
   }

@@ -8,7 +8,7 @@
 #include "adm/elements_fwd.hpp"
 #include "adm/detail/named_option_helper.hpp"
 #include "adm/detail/named_type.hpp"
-#include "adm/libadm_export.h"
+#include "adm/export.h"
 
 namespace adm {
 
@@ -35,12 +35,11 @@ namespace adm {
     template <typename... Parameters>
     AudioBlockFormatMatrix(Parameters... optionalNamedArgs);
 
-    LIBADM_EXPORT AudioBlockFormatMatrix(const AudioBlockFormatMatrix&) =
-        default;
-    LIBADM_EXPORT AudioBlockFormatMatrix(AudioBlockFormatMatrix&&) = default;
-    LIBADM_EXPORT AudioBlockFormatMatrix& operator=(
+    ADM_EXPORT AudioBlockFormatMatrix(const AudioBlockFormatMatrix&) = default;
+    ADM_EXPORT AudioBlockFormatMatrix(AudioBlockFormatMatrix&&) = default;
+    ADM_EXPORT AudioBlockFormatMatrix& operator=(
         const AudioBlockFormatMatrix&) = default;
-    LIBADM_EXPORT AudioBlockFormatMatrix& operator=(AudioBlockFormatMatrix&&) =
+    ADM_EXPORT AudioBlockFormatMatrix& operator=(AudioBlockFormatMatrix&&) =
         default;
     /**
      * @brief ADM parameter getter template
@@ -70,20 +69,20 @@ namespace adm {
     template <typename Parameter>
     bool isDefault() const;
 
-    LIBADM_EXPORT bool isDefault(detail::ParameterTraits<Rtime>::tag) const;
+    ADM_EXPORT bool isDefault(detail::ParameterTraits<Rtime>::tag) const;
 
     /// @brief AudioBlockFormatId setter
-    LIBADM_EXPORT void set(AudioBlockFormatId id);
+    ADM_EXPORT void set(AudioBlockFormatId id);
     /// @brief Rtime setter
-    LIBADM_EXPORT void set(Rtime rtime);
+    ADM_EXPORT void set(Rtime rtime);
     /// @brief Duration setter
-    LIBADM_EXPORT void set(Duration duration);
+    ADM_EXPORT void set(Duration duration);
     /// @brief lstart setter
-    LIBADM_EXPORT void set(Lstart lstart);
+    ADM_EXPORT void set(Lstart lstart);
     /// @brief Lduration setter
-    LIBADM_EXPORT void set(Lduration lduration);
+    ADM_EXPORT void set(Lduration lduration);
     /// @brief InitializeBlock setter
-    LIBADM_EXPORT void set(InitializeBlock initializeBlock);
+    ADM_EXPORT void set(InitializeBlock initializeBlock);
 
     /**
      * @brief ADM parameter unset template
@@ -96,33 +95,32 @@ namespace adm {
     void unset();
 
    private:
-    LIBADM_EXPORT AudioBlockFormatId
+    ADM_EXPORT AudioBlockFormatId
         get(detail::ParameterTraits<AudioBlockFormatId>::tag) const;
-    LIBADM_EXPORT Rtime get(detail::ParameterTraits<Rtime>::tag) const;
-    LIBADM_EXPORT Duration get(detail::ParameterTraits<Duration>::tag) const;
-    LIBADM_EXPORT Lstart get(detail::ParameterTraits<Lstart>::tag) const;
-    LIBADM_EXPORT Lduration get(detail::ParameterTraits<Lduration>::tag) const;
-    LIBADM_EXPORT InitializeBlock
+    ADM_EXPORT Rtime get(detail::ParameterTraits<Rtime>::tag) const;
+    ADM_EXPORT Duration get(detail::ParameterTraits<Duration>::tag) const;
+    ADM_EXPORT Lstart get(detail::ParameterTraits<Lstart>::tag) const;
+    ADM_EXPORT Lduration get(detail::ParameterTraits<Lduration>::tag) const;
+    ADM_EXPORT InitializeBlock
         get(detail::ParameterTraits<InitializeBlock>::tag) const;
 
-    LIBADM_EXPORT bool has(
-        detail::ParameterTraits<AudioBlockFormatId>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<Rtime>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<Duration>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<Lstart>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<Lduration>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<InitializeBlock>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<AudioBlockFormatId>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<Rtime>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<Duration>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<Lstart>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<Lduration>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<InitializeBlock>::tag) const;
 
     template <typename Tag>
     bool isDefault(Tag) const {
       return false;
     }
 
-    LIBADM_EXPORT void unset(detail::ParameterTraits<Rtime>::tag);
-    LIBADM_EXPORT void unset(detail::ParameterTraits<Duration>::tag);
-    LIBADM_EXPORT void unset(detail::ParameterTraits<Lstart>::tag);
-    LIBADM_EXPORT void unset(detail::ParameterTraits<Lduration>::tag);
-    LIBADM_EXPORT void unset(detail::ParameterTraits<InitializeBlock>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<Rtime>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<Duration>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<Lstart>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<Lduration>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<InitializeBlock>::tag);
 
     AudioBlockFormatId id_;
     boost::optional<Rtime> rtime_;

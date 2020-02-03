@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <frame>
 	<frameHeader>
-		<frameFormat frameFormatId="FF_0000" frameStart="00:00:00.000000000" frameDuration="00:00:00.000000001" frameType="full"/>
-		<transportTrackFormat transportId="TP_0000" numTracks="1" numIds="1">
-			<audioTrack trackId="1">
+		<frameFormat frameFormatID="FF_00000000001" frameStart="00:00:00.000000000" frameDuration="00:00:00.000000001" frameType="full"/>
+		<transportTrackFormat transportID="TP_0001" numTracks="1" numIDs="1">
+			<audioTrack trackID="1">
 				<audioTrackUIDRef>ATU_00000001</audioTrackUIDRef>
 			</audioTrack>
 		</transportTrackFormat>

@@ -31,15 +31,15 @@ namespace adm {
   // ---- Has ---- //
   bool AudioBlockFormatId::has(
       detail::ParameterTraits<TypeDescriptor>::tag) const {
-    return channelType_ != boost::none;
+    return true;
   }
   bool AudioBlockFormatId::has(
       detail::ParameterTraits<AudioBlockFormatIdValue>::tag) const {
-    return value_ != boost::none;
+    return true;
   }
   bool AudioBlockFormatId::has(
       detail::ParameterTraits<AudioBlockFormatIdCounter>::tag) const {
-    return counter_ != boost::none;
+    return true;
   }
 
   // ---- isDefault ---- //
@@ -107,7 +107,7 @@ namespace adm {
   }
 
   AudioBlockFormatId parseAudioBlockFormatId(const std::string& id) {
-    const std::regex r("AB_([0-9a-fA-F]{4})([0-9a-fA-F]{4})_([0-9a-fA-F]{8})");
+    const static std::regex r("AB_([0-9a-fA-F]{4})([0-9a-fA-F]{4})_([0-9a-fA-F]{8})");
     std::smatch idMatch;
     if (std::regex_match(id, idMatch, r)) {
       auto type = parseTypeLabel(idMatch[1]);

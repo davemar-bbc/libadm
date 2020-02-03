@@ -7,7 +7,7 @@
 #include "adm/serialized/audio_track.hpp"
 #include "adm/detail/named_option_helper.hpp"
 #include "adm/detail/named_type.hpp"
-#include "adm/libadm_export.h"
+#include "adm/export.h"
 
 namespace adm {
 
@@ -85,13 +85,13 @@ namespace adm {
     bool isDefault() const;
 
     /// @brief TransportId setter
-    LIBADM_EXPORT void set(TransportId id);
+    ADM_EXPORT void set(TransportId id);
     /// @brief TransportName setter
-    LIBADM_EXPORT void set(TransportName name);
+    ADM_EXPORT void set(TransportName name);
     /// @brief TransportId setter
-    LIBADM_EXPORT void set(NumTracks numTracks);
+    ADM_EXPORT void set(NumTracks numTracks);
     /// @brief TransportName setter
-    LIBADM_EXPORT void set(NumIds numIds);
+    ADM_EXPORT void set(NumIds numIds);
 
     /**
      * @brief ADM parameter unset template
@@ -107,28 +107,28 @@ namespace adm {
      * @brief Add AudioTrack
      */
 
-    LIBADM_EXPORT void add(const AudioTrack &audioTrack);
+    ADM_EXPORT void add(const AudioTrack &audioTrack);
 
     /**
      * @brief AudioTrack container getter
      *
      * @returns ContainerProxy containing all AudioTracks.
      */
-    LIBADM_EXPORT AudioTrackConstRange audioTracks() const;
+    ADM_EXPORT AudioTrackConstRange audioTracks() const;
 
     /**
      * @brief AudioTrack container getter
      *
      * @returns ContainerProxy containing all AudioTracks.
      */
-    LIBADM_EXPORT AudioTrackRange audioTracks();
+    ADM_EXPORT AudioTrackRange audioTracks();
 
     /**
      * @brief Clear AudioTracks
      *
      * Removes all audioTracks from the TransportTrackFormat
      */
-    LIBADM_EXPORT void clearAudioTracks();
+    ADM_EXPORT void clearAudioTracks();
 
     /**
      * @brief Print overview to ostream
@@ -136,24 +136,24 @@ namespace adm {
     void print(std::ostream &os) const;
 
    private:
-    LIBADM_EXPORT TransportId
+    ADM_EXPORT TransportId
         get(detail::ParameterTraits<TransportId>::tag) const;
-    LIBADM_EXPORT TransportName
+    ADM_EXPORT TransportName
         get(detail::ParameterTraits<TransportName>::tag) const;
-    LIBADM_EXPORT NumTracks get(detail::ParameterTraits<NumTracks>::tag) const;
-    LIBADM_EXPORT NumIds get(detail::ParameterTraits<NumIds>::tag) const;
+    ADM_EXPORT NumTracks get(detail::ParameterTraits<NumTracks>::tag) const;
+    ADM_EXPORT NumIds get(detail::ParameterTraits<NumIds>::tag) const;
 
-    LIBADM_EXPORT bool has(detail::ParameterTraits<TransportId>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<TransportName>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<NumTracks>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<NumIds>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<TransportId>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<TransportName>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<NumTracks>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<NumIds>::tag) const;
 
     template <typename Tag>
     bool isDefault(Tag) const {
       return false;
     }
 
-    LIBADM_EXPORT void unset(detail::ParameterTraits<TransportName>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<TransportName>::tag);
 
     TransportId transportId_;
     boost::optional<TransportName> transportName_;

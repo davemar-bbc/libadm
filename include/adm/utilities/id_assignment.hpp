@@ -3,7 +3,7 @@
 
 #include "adm/document.hpp"
 #include "adm/frame.hpp"
-#include "adm/libadm_export.h"
+#include "adm/export.h"
 
 #include <memory>
 
@@ -22,7 +22,7 @@ namespace adm {
    * will not get new Ids assigned, as they are considered to be common
    * definitions.
    */
-  LIBADM_EXPORT void reassignIds(std::shared_ptr<Document> document);
+  ADM_EXPORT void reassignIds(std::shared_ptr<Document> document);
 
   /**
    * @brief Reassign ids of an Frame
@@ -37,7 +37,7 @@ namespace adm {
    * will not get new Ids assigned, as they are considered to be common
    * definitions.
    */
-  LIBADM_EXPORT void reassignIds(std::shared_ptr<Frame> frame);
+  ADM_EXPORT void reassignIds(std::shared_ptr<Frame> frame);
 
   /** @name Check if id is a common definitions id
    */

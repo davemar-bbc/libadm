@@ -7,7 +7,7 @@
 #include "adm/serialized_fwd.hpp"
 #include "adm/detail/named_option_helper.hpp"
 #include "adm/detail/named_type.hpp"
-#include "adm/libadm_export.h"
+#include "adm/export.h"
 #include <boost/optional.hpp>
 #include <boost/range/iterator_range_core.hpp>
 #include <memory>
@@ -83,9 +83,9 @@ namespace adm {
     bool isDefault() const;
 
     /// @brief TrackId setter
-    LIBADM_EXPORT void set(TrackId trackId);
+    ADM_EXPORT void set(TrackId trackId);
     /// @brief FormatDescriptor setter
-    LIBADM_EXPORT void set(FormatDescriptor format);
+    ADM_EXPORT void set(FormatDescriptor format);
 
     /**
      * @brief ADM parameter unset template
@@ -100,39 +100,39 @@ namespace adm {
     /**
      * @brief Add AudioTrackUidId
      */
-    LIBADM_EXPORT void add(const AudioTrackUidId &audioTrackUidId);
+    ADM_EXPORT void add(const AudioTrackUidId &audioTrackUidId);
 
     /**
      * @brief AudioTrackUidId container getter
      *
      * @returns ContainerProxy containing all AudioTrackUidIds.
      */
-    LIBADM_EXPORT AudioTrackUidIdConstRange audioTrackUidIds() const;
+    ADM_EXPORT AudioTrackUidIdConstRange audioTrackUidIds() const;
 
     /**
      * @brief AudioTrackUidId container getter
      *
      * @returns ContainerProxy containing all AudioTrackUidIds.
      */
-    LIBADM_EXPORT AudioTrackUidIdRange audioTrackUidIds();
+    ADM_EXPORT AudioTrackUidIdRange audioTrackUidIds();
 
     /**
      * @brief Clear AudioTrackUidIds
      *
      * Removes all audioTrackUidIds from the AudioTrack
      */
-    LIBADM_EXPORT void clearAudioTrackUidIds();
+    ADM_EXPORT void clearAudioTrackUidIds();
     /**
      * @brief Print overview to ostream
      */
     void print(std::ostream &os) const;
 
    private:
-    LIBADM_EXPORT TrackId get(detail::ParameterTraits<TrackId>::tag) const;
-    LIBADM_EXPORT FormatDescriptor
+    ADM_EXPORT TrackId get(detail::ParameterTraits<TrackId>::tag) const;
+    ADM_EXPORT FormatDescriptor
         get(detail::ParameterTraits<FormatDescriptor>::tag) const;
 
-    LIBADM_EXPORT bool has(
+    ADM_EXPORT bool has(
         detail::ParameterTraits<FormatDescriptor>::tag) const;
 
     template <typename Tag>
@@ -140,8 +140,8 @@ namespace adm {
       return false;
     }
 
-    LIBADM_EXPORT void unset(detail::ParameterTraits<TrackId>::tag);
-    LIBADM_EXPORT void unset(detail::ParameterTraits<FormatDescriptor>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<TrackId>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<FormatDescriptor>::tag);
 
     TrackId trackId_;
     boost::optional<FormatDescriptor> format_;

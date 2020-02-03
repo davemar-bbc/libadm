@@ -1,74 +1,58 @@
-#include <boost/mpl/assert.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/type_traits/is_same.hpp>
+#define CATCH_CONFIG_ENABLE_CHRONO_STRINGMAKER
+#include <catch2/catch.hpp>
 #include "adm/elements/audio_block_format_objects.hpp"
 
-#define BOOST_TEST_MODULE AudioBlockFormatObjects
-#include <boost/test/included/unit_test.hpp>
-
-BOOST_AUTO_TEST_CASE(audio_block_format_objects,
-                     *boost::unit_test::tolerance(1e-6)) {
+TEST_CASE("audio_block_format_objects") {
   using namespace adm;
   {
     AudioBlockFormatObjects blockFormat{SphericalPosition()};
 
-    BOOST_TEST(blockFormat.has<AudioBlockFormatId>() == true);
-    BOOST_TEST(blockFormat.has<Rtime>() == true);
-    BOOST_TEST(blockFormat.has<Duration>() == false);
-    BOOST_TEST(blockFormat.has<Lstart>() == false);
-    BOOST_TEST(blockFormat.has<Lduration>() == false);
-    BOOST_TEST(blockFormat.has<InitializeBlock>() == false);
-    BOOST_TEST(blockFormat.has<Cartesian>() == true);
-    BOOST_TEST(blockFormat.has<Width>() == true);
-    BOOST_TEST(blockFormat.has<Height>() == true);
-    BOOST_TEST(blockFormat.has<Depth>() == true);
-    BOOST_TEST(blockFormat.has<Gain>() == true);
-    BOOST_TEST(blockFormat.has<Diffuse>() == true);
-    BOOST_TEST(blockFormat.has<ChannelLock>() == true);
-    BOOST_TEST(blockFormat.has<ObjectDivergence>() == true);
-    BOOST_TEST(blockFormat.has<JumpPosition>() == true);
-    BOOST_TEST(blockFormat.has<ScreenRef>() == true);
-    BOOST_TEST(blockFormat.has<Importance>() == true);
+    REQUIRE(blockFormat.has<AudioBlockFormatId>() == true);
+    REQUIRE(blockFormat.has<Rtime>() == true);
+    REQUIRE(blockFormat.has<Duration>() == false);
+    REQUIRE(blockFormat.has<Cartesian>() == true);
+    REQUIRE(blockFormat.has<Width>() == true);
+    REQUIRE(blockFormat.has<Height>() == true);
+    REQUIRE(blockFormat.has<Depth>() == true);
+    REQUIRE(blockFormat.has<Gain>() == true);
+    REQUIRE(blockFormat.has<Diffuse>() == true);
+    REQUIRE(blockFormat.has<ChannelLock>() == true);
+    REQUIRE(blockFormat.has<ObjectDivergence>() == true);
+    REQUIRE(blockFormat.has<JumpPosition>() == true);
+    REQUIRE(blockFormat.has<ScreenRef>() == true);
+    REQUIRE(blockFormat.has<Importance>() == true);
 
-    BOOST_TEST(blockFormat.isDefault<AudioBlockFormatId>() == false);
-    BOOST_TEST(blockFormat.isDefault<Rtime>() == true);
-    BOOST_TEST(blockFormat.isDefault<Duration>() == false);
-    BOOST_TEST(blockFormat.isDefault<Lstart>() == false);
-    BOOST_TEST(blockFormat.isDefault<Lduration>() == false);
-    BOOST_TEST(blockFormat.isDefault<InitializeBlock>() == false);
-    BOOST_TEST(blockFormat.isDefault<Cartesian>() == true);
-    BOOST_TEST(blockFormat.isDefault<Width>() == true);
-    BOOST_TEST(blockFormat.isDefault<Height>() == true);
-    BOOST_TEST(blockFormat.isDefault<Depth>() == true);
-    BOOST_TEST(blockFormat.isDefault<Gain>() == true);
-    BOOST_TEST(blockFormat.isDefault<Diffuse>() == true);
-    BOOST_TEST(blockFormat.isDefault<ChannelLock>() == true);
-    BOOST_TEST(blockFormat.isDefault<ObjectDivergence>() == true);
-    BOOST_TEST(blockFormat.isDefault<JumpPosition>() == true);
-    BOOST_TEST(blockFormat.isDefault<ScreenRef>() == true);
-    BOOST_TEST(blockFormat.isDefault<Importance>() == true);
+    REQUIRE(blockFormat.isDefault<AudioBlockFormatId>() == false);
+    REQUIRE(blockFormat.isDefault<Rtime>() == true);
+    REQUIRE(blockFormat.isDefault<Duration>() == false);
+    REQUIRE(blockFormat.isDefault<Cartesian>() == true);
+    REQUIRE(blockFormat.isDefault<Width>() == true);
+    REQUIRE(blockFormat.isDefault<Height>() == true);
+    REQUIRE(blockFormat.isDefault<Depth>() == true);
+    REQUIRE(blockFormat.isDefault<Gain>() == true);
+    REQUIRE(blockFormat.isDefault<Diffuse>() == true);
+    REQUIRE(blockFormat.isDefault<ChannelLock>() == true);
+    REQUIRE(blockFormat.isDefault<ObjectDivergence>() == true);
+    REQUIRE(blockFormat.isDefault<JumpPosition>() == true);
+    REQUIRE(blockFormat.isDefault<ScreenRef>() == true);
+    REQUIRE(blockFormat.isDefault<Importance>() == true);
 
-    BOOST_CHECK(blockFormat.get<Rtime>() == std::chrono::seconds(0));
-    BOOST_TEST(blockFormat.get<Width>() == 0.f);
-    BOOST_TEST(blockFormat.get<Height>() == 0.f);
-    BOOST_TEST(blockFormat.get<Depth>() == 0.f);
-    BOOST_TEST(blockFormat.get<Gain>() == 1.f);
-    BOOST_TEST(blockFormat.get<Diffuse>() == 0.f);
-    BOOST_TEST(blockFormat.get<ChannelLock>().get<ChannelLockFlag>() == false);
-    BOOST_TEST(blockFormat.get<ObjectDivergence>().get<Divergence>() == 0.f);
-    BOOST_TEST(blockFormat.get<ObjectDivergence>().get<AzimuthRange>() == 45.f);
-    BOOST_TEST(blockFormat.get<ObjectDivergence>().get<PositionRange>() == 0.f);
-    BOOST_TEST(blockFormat.get<JumpPosition>().get<JumpPositionFlag>() ==
-               false);
-    BOOST_CHECK(
-        blockFormat.get<JumpPosition>().get<InterpolationLength>().get() ==
-        std::chrono::seconds(0));
+    REQUIRE(blockFormat.get<Rtime>().get() == std::chrono::seconds(0));
+    REQUIRE(blockFormat.get<Width>() == 0.f);
+    REQUIRE(blockFormat.get<Height>() == 0.f);
+    REQUIRE(blockFormat.get<Depth>() == 0.f);
+    REQUIRE(blockFormat.get<Gain>() == 1.f);
+    REQUIRE(blockFormat.get<Diffuse>() == 0.f);
+    REQUIRE(blockFormat.get<ChannelLock>().get<ChannelLockFlag>() == false);
+    REQUIRE(blockFormat.get<ObjectDivergence>().get<Divergence>() == 0.f);
+    REQUIRE(blockFormat.get<ObjectDivergence>().get<AzimuthRange>() == 45.f);
+    REQUIRE(blockFormat.get<ObjectDivergence>().get<PositionRange>() == 0.f);
+    REQUIRE(blockFormat.get<JumpPosition>().get<JumpPositionFlag>() == false);
+    REQUIRE(blockFormat.get<JumpPosition>().get<InterpolationLength>().get() ==
+            std::chrono::seconds(0));
 
     blockFormat.set(Rtime(std::chrono::seconds(2)));
     blockFormat.set(Duration(std::chrono::seconds(10)));
-    blockFormat.set(Lstart(std::chrono::seconds(0)));
-    blockFormat.set(Lduration(std::chrono::seconds(10)));
-    blockFormat.set(InitializeBlock(true));
     blockFormat.set(Cartesian(false));
     blockFormat.set(Width(45.f));
     blockFormat.set(Height(20.f));
@@ -83,49 +67,40 @@ BOOST_AUTO_TEST_CASE(audio_block_format_objects,
     blockFormat.set(ScreenRef(true));
     blockFormat.set(Importance(10));
 
-    BOOST_CHECK(blockFormat.get<Rtime>() == std::chrono::seconds(2));
-    BOOST_CHECK(blockFormat.get<Duration>() == std::chrono::seconds(10));
-    BOOST_CHECK(blockFormat.get<Lstart>() == std::chrono::seconds(0));
-    BOOST_CHECK(blockFormat.get<Lduration>() == std::chrono::seconds(10));
-    BOOST_CHECK(blockFormat.get<InitializeBlock>() == true);
-    BOOST_TEST(blockFormat.get<Cartesian>() == false);
-    BOOST_TEST(blockFormat.get<Width>() == 45.f);
-    BOOST_TEST(blockFormat.get<Height>() == 20.f);
-    BOOST_TEST(blockFormat.get<Depth>() == 0.2f);
-    BOOST_TEST(blockFormat.get<Gain>() == 2.5f);
-    BOOST_TEST(blockFormat.get<Diffuse>() == 0.5f);
-    BOOST_TEST(blockFormat.get<ChannelLock>().get<ChannelLockFlag>() == true);
-    BOOST_TEST(blockFormat.get<ObjectDivergence>().get<Divergence>().get() ==
-               0.2);
-    BOOST_TEST(blockFormat.get<JumpPosition>().get<JumpPositionFlag>() == true);
-    BOOST_CHECK(blockFormat.get<JumpPosition>().get<InterpolationLength>() ==
-                std::chrono::milliseconds(20));
-    BOOST_TEST(blockFormat.get<ScreenRef>() == true);
-    BOOST_TEST(blockFormat.get<Importance>() == 10);
+    REQUIRE(blockFormat.get<Rtime>().get() == std::chrono::seconds(2));
+    REQUIRE(blockFormat.get<Duration>().get() == std::chrono::seconds(10));
+    REQUIRE(blockFormat.get<Cartesian>() == false);
+    REQUIRE(blockFormat.get<Width>() == 45.f);
+    REQUIRE(blockFormat.get<Height>() == 20.f);
+    REQUIRE(blockFormat.get<Depth>() == 0.2f);
+    REQUIRE(blockFormat.get<Gain>() == 2.5f);
+    REQUIRE(blockFormat.get<Diffuse>() == 0.5f);
+    REQUIRE(blockFormat.get<ChannelLock>().get<ChannelLockFlag>() == true);
+    REQUIRE(blockFormat.get<ObjectDivergence>().get<Divergence>().get() ==
+            Approx(0.2));
+    REQUIRE(blockFormat.get<JumpPosition>().get<JumpPositionFlag>() == true);
+    REQUIRE(blockFormat.get<JumpPosition>().get<InterpolationLength>().get() ==
+            std::chrono::milliseconds(20));
+    REQUIRE(blockFormat.get<ScreenRef>() == true);
+    REQUIRE(blockFormat.get<Importance>() == 10);
 
-    BOOST_TEST(blockFormat.isDefault<AudioBlockFormatId>() == false);
-    BOOST_TEST(blockFormat.isDefault<Rtime>() == false);
-    BOOST_TEST(blockFormat.isDefault<Duration>() == false);
-    BOOST_TEST(blockFormat.isDefault<Lstart>() == false);
-    BOOST_TEST(blockFormat.isDefault<Lduration>() == false);
-    BOOST_TEST(blockFormat.isDefault<InitializeBlock>() == false);
-    BOOST_TEST(blockFormat.isDefault<Cartesian>() == false);
-    BOOST_TEST(blockFormat.isDefault<Width>() == false);
-    BOOST_TEST(blockFormat.isDefault<Height>() == false);
-    BOOST_TEST(blockFormat.isDefault<Depth>() == false);
-    BOOST_TEST(blockFormat.isDefault<Gain>() == false);
-    BOOST_TEST(blockFormat.isDefault<Diffuse>() == false);
-    BOOST_TEST(blockFormat.isDefault<ChannelLock>() == false);
-    BOOST_TEST(blockFormat.isDefault<ObjectDivergence>() == false);
-    BOOST_TEST(blockFormat.isDefault<JumpPosition>() == false);
-    BOOST_TEST(blockFormat.isDefault<ScreenRef>() == false);
-    BOOST_TEST(blockFormat.isDefault<Importance>() == false);
+    REQUIRE(blockFormat.isDefault<AudioBlockFormatId>() == false);
+    REQUIRE(blockFormat.isDefault<Rtime>() == false);
+    REQUIRE(blockFormat.isDefault<Duration>() == false);
+    REQUIRE(blockFormat.isDefault<Cartesian>() == false);
+    REQUIRE(blockFormat.isDefault<Width>() == false);
+    REQUIRE(blockFormat.isDefault<Height>() == false);
+    REQUIRE(blockFormat.isDefault<Depth>() == false);
+    REQUIRE(blockFormat.isDefault<Gain>() == false);
+    REQUIRE(blockFormat.isDefault<Diffuse>() == false);
+    REQUIRE(blockFormat.isDefault<ChannelLock>() == false);
+    REQUIRE(blockFormat.isDefault<ObjectDivergence>() == false);
+    REQUIRE(blockFormat.isDefault<JumpPosition>() == false);
+    REQUIRE(blockFormat.isDefault<ScreenRef>() == false);
+    REQUIRE(blockFormat.isDefault<Importance>() == false);
 
     blockFormat.unset<Rtime>();
     blockFormat.unset<Duration>();
-    blockFormat.unset<Lstart>();
-    blockFormat.unset<Lduration>();
-    blockFormat.unset<InitializeBlock>();
     blockFormat.unset<Cartesian>();
     blockFormat.unset<Width>();
     blockFormat.unset<Height>();
@@ -138,22 +113,87 @@ BOOST_AUTO_TEST_CASE(audio_block_format_objects,
     blockFormat.unset<ScreenRef>();
     blockFormat.unset<Importance>();
 
-    BOOST_TEST(blockFormat.isDefault<AudioBlockFormatId>() == false);
-    BOOST_TEST(blockFormat.isDefault<Rtime>() == true);
-    BOOST_TEST(blockFormat.isDefault<Duration>() == false);
-    BOOST_TEST(blockFormat.isDefault<Lstart>() == false);
-    BOOST_TEST(blockFormat.isDefault<Lduration>() == false);
-    BOOST_TEST(blockFormat.isDefault<InitializeBlock>() == false);
-    BOOST_TEST(blockFormat.isDefault<Cartesian>() == true);
-    BOOST_TEST(blockFormat.isDefault<Width>() == true);
-    BOOST_TEST(blockFormat.isDefault<Height>() == true);
-    BOOST_TEST(blockFormat.isDefault<Depth>() == true);
-    BOOST_TEST(blockFormat.isDefault<Gain>() == true);
-    BOOST_TEST(blockFormat.isDefault<Diffuse>() == true);
-    BOOST_TEST(blockFormat.isDefault<ChannelLock>() == true);
-    BOOST_TEST(blockFormat.isDefault<ObjectDivergence>() == true);
-    BOOST_TEST(blockFormat.isDefault<JumpPosition>() == true);
-    BOOST_TEST(blockFormat.isDefault<ScreenRef>() == true);
-    BOOST_TEST(blockFormat.isDefault<Importance>() == true);
+    REQUIRE(blockFormat.isDefault<AudioBlockFormatId>() == false);
+    REQUIRE(blockFormat.isDefault<Rtime>() == true);
+    REQUIRE(blockFormat.isDefault<Duration>() == false);
+    REQUIRE(blockFormat.isDefault<Cartesian>() == true);
+    REQUIRE(blockFormat.isDefault<Width>() == true);
+    REQUIRE(blockFormat.isDefault<Height>() == true);
+    REQUIRE(blockFormat.isDefault<Depth>() == true);
+    REQUIRE(blockFormat.isDefault<Gain>() == true);
+    REQUIRE(blockFormat.isDefault<Diffuse>() == true);
+    REQUIRE(blockFormat.isDefault<ChannelLock>() == true);
+    REQUIRE(blockFormat.isDefault<ObjectDivergence>() == true);
+    REQUIRE(blockFormat.isDefault<JumpPosition>() == true);
+    REQUIRE(blockFormat.isDefault<ScreenRef>() == true);
+    REQUIRE(blockFormat.isDefault<Importance>() == true);
+  }
+}
+
+TEST_CASE("audio_block_format_objects spherical") {
+  using namespace adm;
+
+  SphericalPosition pos(Azimuth(10.0f), Elevation(0.0f), Distance(1.0f));
+
+  // explicitly set cartesian to default -> no change to position
+  {
+    AudioBlockFormatObjects block_format(pos, Cartesian(false));
+    REQUIRE(block_format.get<SphericalPosition>().get<Azimuth>().get() ==
+            10.0f);
+    REQUIRE(block_format.has<CartesianPosition>() == false);
+    REQUIRE(block_format.get<Cartesian>().get() == false);
+    REQUIRE(block_format.isDefault<Cartesian>() == false);
+  }
+
+  // explicitly set cartesian to non-default -> default position of right type
+  {
+    AudioBlockFormatObjects block_format(pos, Cartesian(true));
+    REQUIRE(block_format.has<SphericalPosition>() == false);
+    REQUIRE(block_format.has<CartesianPosition>() == true);
+    REQUIRE(block_format.get<Cartesian>().get() == true);
+    REQUIRE(block_format.isDefault<Cartesian>() == false);
+  }
+
+  // no set of cartesian -> cartesian is default
+  {
+    AudioBlockFormatObjects block_format(pos);
+    REQUIRE(block_format.get<SphericalPosition>().get<Azimuth>().get() ==
+            10.0f);
+    REQUIRE(block_format.has<CartesianPosition>() == false);
+    REQUIRE(block_format.get<Cartesian>().get() == false);
+    REQUIRE(block_format.isDefault<Cartesian>() == true);
+  }
+}
+
+TEST_CASE("audio_block_format_objects cartesian") {
+  using namespace adm;
+
+  CartesianPosition pos(X(0.1f), Y(0.2f), Z(0.3f));
+
+  // explicitly set cartesian to default -> no change to position
+  {
+    AudioBlockFormatObjects block_format(pos, Cartesian(true));
+    REQUIRE(block_format.get<CartesianPosition>().get<X>().get() == 0.1f);
+    REQUIRE(block_format.has<SphericalPosition>() == false);
+    REQUIRE(block_format.get<Cartesian>().get() == true);
+    REQUIRE(block_format.isDefault<Cartesian>() == false);
+  }
+
+  // explicitly set cartesian to non-default -> default position of right type
+  {
+    AudioBlockFormatObjects block_format(pos, Cartesian(false));
+    REQUIRE(block_format.has<CartesianPosition>() == false);
+    REQUIRE(block_format.has<SphericalPosition>() == true);
+    REQUIRE(block_format.get<Cartesian>().get() == false);
+    REQUIRE(block_format.isDefault<Cartesian>() == false);
+  }
+
+  // no set of cartesian -> still not default
+  {
+    AudioBlockFormatObjects block_format(pos);
+    REQUIRE(block_format.get<CartesianPosition>().get<X>().get() == 0.1f);
+    REQUIRE(block_format.has<SphericalPosition>() == false);
+    REQUIRE(block_format.get<Cartesian>().get() == true);
+    REQUIRE(block_format.isDefault<Cartesian>() == false);
   }
 }

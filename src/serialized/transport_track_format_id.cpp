@@ -50,14 +50,14 @@ namespace adm {
   }
 
   TransportId parseTransportId(const std::string& id) {
-    const std::regex r("TP_([0-9]{4})");
+    const std::regex r("TP_([0-9a-fA-F]{4})");
     std::smatch idMatch;
     if (std::regex_match(id, idMatch, r)) {
       auto value = detail::parseHexValue(idMatch[1], 4);
       return TransportId(TransportIdValue(value));
     } else {
       std::stringstream errorString;
-      errorString << "invalid TransportId: " << id;
+      errorString << "invalid TransportID: " << id;
       throw std::runtime_error(errorString.str());
     }
   }

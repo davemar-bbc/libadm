@@ -260,13 +260,14 @@ namespace adm {
     initializeBlock_ = initializeBlock;
   }
   void AudioBlockFormatObjects::set(Cartesian cartesian) {
-    if (isDefault<Cartesian>() || get<Cartesian>() != cartesian) {
-      cartesian_ = cartesian;
-      if (cartesian == true) {
-        set(CartesianPosition());
-      } else {
-        set(SphericalPosition());
-      }
+    cartesian_ = cartesian;
+
+    if (cartesian.get()) {
+      sphericalPosition_ = boost::none;
+      if (!cartesianPosition_) cartesianPosition_ = CartesianPosition();
+    } else {
+      cartesianPosition_ = boost::none;
+      if (!sphericalPosition_) sphericalPosition_ = SphericalPosition();
     }
   }
   void AudioBlockFormatObjects::set(Position position) {
@@ -278,15 +279,15 @@ namespace adm {
   }
   void AudioBlockFormatObjects::set(SphericalPosition position) {
     sphericalPosition_ = position;
-    unset<CartesianPosition>();
-    if (!isDefault<Cartesian>()) {
-      set(Cartesian(false));
+    cartesianPosition_ = boost::none;
+    if (cartesian_ != boost::none) {
+      cartesian_ = Cartesian(false);
     }
   }
   void AudioBlockFormatObjects::set(CartesianPosition position) {
     cartesianPosition_ = position;
-    unset<SphericalPosition>();
-    set(Cartesian(true));
+    sphericalPosition_ = boost::none;
+    cartesian_ = Cartesian(true);
   }
   void AudioBlockFormatObjects::set(Width width) { width_ = width; }
   void AudioBlockFormatObjects::set(Height height) { height_ = height; }

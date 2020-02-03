@@ -18,7 +18,7 @@
 #include "adm/detail/named_type.hpp"
 #include "adm/detail/named_type_validators.hpp"
 #include "adm/detail/named_option_helper.hpp"
-#include "adm/libadm_export.h"
+#include "adm/export.h"
 
 namespace adm {
 
@@ -83,10 +83,10 @@ namespace adm {
     template <typename... Parameters>
     FrameFormat(FrameStart start, FrameDuration duration, FrameType frameType,
                 Parameters... optionalNamedArgs);
-    LIBADM_EXPORT FrameFormat(const FrameFormat &) = default;
-    LIBADM_EXPORT FrameFormat(FrameFormat &&) = default;
-    LIBADM_EXPORT FrameFormat &operator=(const FrameFormat &) = default;
-    LIBADM_EXPORT FrameFormat &operator=(FrameFormat &&) = default;
+    ADM_EXPORT FrameFormat(const FrameFormat &) = default;
+    ADM_EXPORT FrameFormat(FrameFormat &&) = default;
+    ADM_EXPORT FrameFormat &operator=(const FrameFormat &) = default;
+    ADM_EXPORT FrameFormat &operator=(FrameFormat &&) = default;
 
     /**
      * @brief ADM parameter getter template
@@ -117,23 +117,23 @@ namespace adm {
     bool isDefault() const;
 
     /// @brief FrameFormatId setter
-    LIBADM_EXPORT void set(FrameFormatId id);
+    ADM_EXPORT void set(FrameFormatId id);
     /// @brief FrameStart setter
-    LIBADM_EXPORT void set(FrameStart start);
+    ADM_EXPORT void set(FrameStart start);
     /// @brief FrameDuration setter
-    LIBADM_EXPORT void set(FrameDuration duration);
+    ADM_EXPORT void set(FrameDuration duration);
     /// @brief TimeReference setter
-    LIBADM_EXPORT void set(TimeReference timeReference);
+    ADM_EXPORT void set(TimeReference timeReference);
     /// @brief FrameType setter
-    LIBADM_EXPORT void set(FrameType frameType);
+    ADM_EXPORT void set(FrameType frameType);
     /// @brief CountToFull setter
-    LIBADM_EXPORT void set(CountToFull countToFull);
+    ADM_EXPORT void set(CountToFull countToFull);
     /// @brief numSubFrame setter
-    LIBADM_EXPORT void set(NumSubFrame numSubFrame);
+    ADM_EXPORT void set(NumSubFrame numSubFrame);
     /// @brief FrameSkip setter
-    LIBADM_EXPORT void set(FrameSkip frameSkip);
+    ADM_EXPORT void set(FrameSkip frameSkip);
     /// @brief FrameShift setter
-    LIBADM_EXPORT void set(FrameShift frameShift);
+    ADM_EXPORT void set(FrameShift frameShift);
 
     /**
      * @brief ADM parameter unset template
@@ -151,45 +151,45 @@ namespace adm {
     void print(std::ostream &os) const;
 
    private:
-    LIBADM_EXPORT FrameFormatId
+    ADM_EXPORT FrameFormatId
         get(detail::ParameterTraits<FrameFormatId>::tag) const;
-    LIBADM_EXPORT FrameStart
+    ADM_EXPORT FrameStart
         get(detail::ParameterTraits<FrameStart>::tag) const;
-    LIBADM_EXPORT FrameDuration
+    ADM_EXPORT FrameDuration
         get(detail::ParameterTraits<FrameDuration>::tag) const;
-    LIBADM_EXPORT TimeReference
+    ADM_EXPORT TimeReference
         get(detail::ParameterTraits<TimeReference>::tag) const;
-    LIBADM_EXPORT FrameType get(detail::ParameterTraits<FrameType>::tag) const;
-    LIBADM_EXPORT CountToFull
+    ADM_EXPORT FrameType get(detail::ParameterTraits<FrameType>::tag) const;
+    ADM_EXPORT CountToFull
         get(detail::ParameterTraits<CountToFull>::tag) const;
-    LIBADM_EXPORT NumSubFrame
+    ADM_EXPORT NumSubFrame
         get(detail::ParameterTraits<NumSubFrame>::tag) const;
-    LIBADM_EXPORT FrameSkip get(detail::ParameterTraits<FrameSkip>::tag) const;
-    LIBADM_EXPORT FrameShift
+    ADM_EXPORT FrameSkip get(detail::ParameterTraits<FrameSkip>::tag) const;
+    ADM_EXPORT FrameShift
         get(detail::ParameterTraits<FrameShift>::tag) const;
 
-    LIBADM_EXPORT bool has(detail::ParameterTraits<FrameFormatId>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<FrameStart>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<FrameDuration>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<TimeReference>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<FrameType>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<CountToFull>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<NumSubFrame>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<FrameSkip>::tag) const;
-    LIBADM_EXPORT bool has(detail::ParameterTraits<FrameShift>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<FrameFormatId>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<FrameStart>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<FrameDuration>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<TimeReference>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<FrameType>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<CountToFull>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<NumSubFrame>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<FrameSkip>::tag) const;
+    ADM_EXPORT bool has(detail::ParameterTraits<FrameShift>::tag) const;
 
-    LIBADM_EXPORT void unset(detail::ParameterTraits<TimeReference>::tag);
-    LIBADM_EXPORT void unset(detail::ParameterTraits<CountToFull>::tag);
-    LIBADM_EXPORT void unset(detail::ParameterTraits<NumSubFrame>::tag);
-    LIBADM_EXPORT void unset(detail::ParameterTraits<FrameSkip>::tag);
-    LIBADM_EXPORT void unset(detail::ParameterTraits<FrameShift>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<TimeReference>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<CountToFull>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<NumSubFrame>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<FrameSkip>::tag);
+    ADM_EXPORT void unset(detail::ParameterTraits<FrameShift>::tag);
 
     template <typename Tag>
     bool isDefault(Tag) const {
       return false;
     }
 
-    LIBADM_EXPORT void isDefault(detail::ParameterTraits<TimeReference>::tag);
+    ADM_EXPORT void isDefault(detail::ParameterTraits<TimeReference>::tag);
 
     FrameFormatId id_;
     FrameStart start_;

@@ -60,9 +60,29 @@ namespace adm {
       node.addOptionalAttribute<End>(programme, "end");
       node.addOptionalAttribute<MaxDuckingDepth>(programme, "maxDuckingDepth");
       node.addReferences<AudioContent, AudioContentId>(programme, "audioContentIDRef");
+      node.addOptionalElement<LoudnessMetadata>(programme, "loudnessMetadata", &formatLoudnessMetadata);
       // clang-format on
     }
 
+    void formatLoudnessMetadata(XmlNode &node,
+                                const LoudnessMetadata loudnessMetadata) {
+      node.addOptionalAttribute<LoudnessMethod>(&loudnessMetadata,
+                                                "loudnessMethod");
+      node.addOptionalAttribute<LoudnessRecType>(&loudnessMetadata,
+                                                 "loudnessRecType");
+      node.addOptionalAttribute<LoudnessCorrectionType>(
+          &loudnessMetadata, "loudnessCorrectionType");
+      node.addOptionalElement<IntegratedLoudness>(&loudnessMetadata,
+                                                  "integratedLoudness");
+      node.addOptionalElement<LoudnessRange>(&loudnessMetadata,
+                                             "loudnessRange");
+      node.addOptionalElement<MaxTruePeak>(&loudnessMetadata, "maxTruePeak");
+      node.addOptionalElement<MaxMomentary>(&loudnessMetadata, "maxMomentary");
+      node.addOptionalElement<MaxShortTerm>(&loudnessMetadata, "maxShortTerm");
+      node.addOptionalElement<DialogueLoudness>(&loudnessMetadata,
+                                                "dialogueLoudness");
+    }
+    
     void formatAudioContent(XmlNode &node,
                             std::shared_ptr<const AudioContent> content) {
       // clang-format off
@@ -70,9 +90,37 @@ namespace adm {
       node.addOptionalAttribute<AudioContentName>(content, "audioContentName");
       node.addOptionalAttribute<AudioContentLanguage>(content, "audioContentLanguage");
       node.addReferences<AudioObject, AudioObjectId>(content, "audioObjectIDRef");
+      node.addOptionalElement<LoudnessMetadata>(content, "loudnessMetadata", &formatLoudnessMetadata);
+      node.addOptionalElement<NonDialogueContentKind>(content, "dialogue", &formatNonDialogueContentKind);
+      node.addOptionalElement<DialogueContentKind>(content, "dialogue", &formatDialogueContentKind);
+      node.addOptionalElement<MixedContentKind>(content, "dialogue", &formatMixedContentKind);
       // clang-format on
     }
 
+    void formatNonDialogueContentKind(
+        XmlNode &node, const NonDialogueContentKind contentKind) {
+      // clang-format off
+      node.addAttribute("nonDialogueContentKind", std::to_string(contentKind.get()));
+      node.setValue(std::string("0"));
+      // clang-format on
+    }
+
+    void formatDialogueContentKind(XmlNode &node,
+                                   const DialogueContentKind contentKind) {
+      // clang-format off
+      node.addAttribute("dialogueContentKind", std::to_string(contentKind.get()));
+      node.setValue(std::string("1"));
+      // clang-format on
+    }
+
+    void formatMixedContentKind(XmlNode &node,
+                                const MixedContentKind contentKind) {
+      // clang-format off
+      node.addAttribute("mixedContentKind", std::to_string(contentKind.get()));
+      node.setValue(std::string("2"));
+      // clang-format on
+    }
+    
     void formatAudioObject(XmlNode &node,
                            std::shared_ptr<const AudioObject> object) {
       // clang-format off
@@ -240,6 +288,9 @@ namespace adm {
       node.addAttribute<AudioBlockFormatId>(&audioBlock, "audioBlockFormatID");
       node.addOptionalAttribute<Rtime>(&audioBlock, "rtime");
       node.addOptionalAttribute<Duration>(&audioBlock, "duration");
+      node.addOptionalAttribute<Lstart>(&audioBlock, "lstart");
+      node.addOptionalAttribute<Lduration>(&audioBlock, "lduration");
+      node.addOptionalAttribute<InitializeBlock>(&audioBlock, "initializeBlock");
       node.addMultiElement<SpeakerLabels>(&audioBlock, "speakerLabel", &formatSpeakerLabels);
       node.addMultiElement<SpeakerPosition>(&audioBlock, "position", &formatSpeakerPosition);
       // clang-format on
@@ -305,6 +356,7 @@ namespace adm {
       node.addAttribute<AudioBlockFormatId>(&audioBlock, "audioBlockFormatID");
       node.addOptionalAttribute<Rtime>(&audioBlock, "rtime");
       node.addOptionalAttribute<Duration>(&audioBlock, "duration");
+      node.addOptionalAttribute<InitializeBlock>(&audioBlock, "initializeBlock");
       // TODO: add missing matrix attributes and elements
       // clang-format on
     }
@@ -315,6 +367,9 @@ namespace adm {
       node.addAttribute<AudioBlockFormatId>(&audioBlock, "audioBlockFormatID");
       node.addOptionalAttribute<Rtime>(&audioBlock, "rtime");
       node.addOptionalAttribute<Duration>(&audioBlock, "duration");
+      node.addOptionalAttribute<Lstart>(&audioBlock, "lstart");
+      node.addOptionalAttribute<Lduration>(&audioBlock, "lduration");
+      node.addOptionalAttribute<InitializeBlock>(&audioBlock, "initializeBlock");
       node.addMultiElement<Position>(&audioBlock, "position", &formatPosition);
       node.addOptionalElement<Width>(&audioBlock, "width");
       node.addOptionalElement<Height>(&audioBlock, "height");
@@ -385,6 +440,9 @@ namespace adm {
       node.addAttribute<AudioBlockFormatId>(&audioBlock, "audioBlockFormatID");
       node.addOptionalAttribute<Rtime>(&audioBlock, "rtime");
       node.addOptionalAttribute<Duration>(&audioBlock, "duration");
+      node.addOptionalAttribute<Lstart>(&audioBlock, "lstart");
+      node.addOptionalAttribute<Lduration>(&audioBlock, "lduration");
+      node.addOptionalAttribute<InitializeBlock>(&audioBlock, "initializeBlock");
       // TODO: add missing hoa attributes and elements
       // clang-format on
     }
@@ -395,6 +453,9 @@ namespace adm {
       node.addAttribute<AudioBlockFormatId>(&audioBlock, "audioBlockFormatID");
       node.addOptionalAttribute<Rtime>(&audioBlock, "rtime");
       node.addOptionalAttribute<Duration>(&audioBlock, "duration");
+      node.addOptionalAttribute<Lstart>(&audioBlock, "lstart");
+      node.addOptionalAttribute<Lduration>(&audioBlock, "lduration");
+      node.addOptionalAttribute<InitializeBlock>(&audioBlock, "initializeBlock");
       // TODO: add missing binaural attributes and elements
       // clang-format on
     }
@@ -444,7 +505,7 @@ namespace adm {
     }
 
     void formatFrameFormat(XmlNode &node, const FrameFormat &format) {
-      node.addAttribute<FrameFormatId>(&format, "frameFormatId");
+      node.addAttribute<FrameFormatId>(&format, "frameFormatID");
       node.addAttribute<FrameStart>(&format, "frameStart");
       node.addAttribute<FrameDuration>(&format, "frameDuration");
       node.addAttribute<FrameType>(&format, "frameType");
@@ -457,13 +518,13 @@ namespace adm {
 
     void formatTransportTrackFormat(XmlNode &node,
                                     const TransportTrackFormat &format) {
-      node.addAttribute<TransportId>(&format, "transportId");
+      node.addAttribute<TransportId>(&format, "transportID");
       node.addOptionalAttribute<TransportName>(&format, "transportName");
       node.addOptionalAttribute<NumTracks>(&format, "numTracks");
-      node.addOptionalAttribute<NumIds>(&format, "numIds");
+      node.addOptionalAttribute<NumIds>(&format, "numIDs");
       for (const auto &audioTrack : format.audioTracks()) {
         auto trackNode = node.addNode("audioTrack");
-        trackNode.addAttribute<TrackId>(&audioTrack, "trackId");
+        trackNode.addAttribute<TrackId>(&audioTrack, "trackID");
         trackNode.addOptionalAttribute<FormatDescriptor>(
             &audioTrack, "formatLabel", &formatFormatLabel);
         trackNode.addOptionalAttribute<FormatDescriptor>(
