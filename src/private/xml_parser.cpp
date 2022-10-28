@@ -467,6 +467,9 @@ namespace adm {
       setOptionalAttribute<AudioBlockFormatId>(node, "audioBlockFormatID", audioBlockFormat, &parseAudioBlockFormatId);
       setOptionalAttribute<Rtime>(node, "rtime", audioBlockFormat, &parseTimecode);
       setOptionalAttribute<Duration>(node, "duration", audioBlockFormat, &parseTimecode);
+      setOptionalAttribute<Lstart>(node, "lstart", audioBlockFormat, &parseTimecode);
+      setOptionalAttribute<Lduration>(node, "lduration", audioBlockFormat, &parseTimecode);
+      setOptionalAttribute<InitializeBlock>(node, "initializeBlock", audioBlockFormat);
       setMultiElement<SpeakerPosition>(node, "position", audioBlockFormat, &parseSpeakerPosition);
       addOptionalElements<SpeakerLabel>(node, "speakerLabel", audioBlockFormat, &parseSpeakerLabel);
       setOptionalElement<HeadLocked>(node, "headLocked", audioBlockFormat);
@@ -636,6 +639,9 @@ namespace adm {
       setOptionalAttribute<AudioBlockFormatId>(node, "audioBlockFormatID", audioBlockFormat, &parseAudioBlockFormatId);
       setOptionalAttribute<Rtime>(node, "rtime", audioBlockFormat, &parseTimecode);
       setOptionalAttribute<Duration>(node, "duration", audioBlockFormat, &parseTimecode);
+      setOptionalAttribute<Lstart>(node, "lstart", audioBlockFormat, &parseTimecode);
+      setOptionalAttribute<Lduration>(node, "lduration", audioBlockFormat, &parseTimecode);
+      setOptionalAttribute<InitializeBlock>(node, "initializeBlock", audioBlockFormat);
 
       setOptionalElement<Cartesian>(node, "cartesian", audioBlockFormat);
       auto cartesianGuess = guessCartesianFlag(node, "position");
@@ -872,6 +878,9 @@ namespace adm {
       setOptionalAttribute<AudioBlockFormatId>(node, "audioBlockFormatID", audioBlockFormat, &parseAudioBlockFormatId);
       setOptionalAttribute<Rtime>(node, "rtime", audioBlockFormat, &parseTimecode);
       setOptionalAttribute<Duration>(node, "duration", audioBlockFormat, &parseTimecode);
+      setOptionalAttribute<Lstart>(node, "lstart", audioBlockFormat, &parseTimecode);
+      setOptionalAttribute<Lduration>(node, "lduration", audioBlockFormat, &parseTimecode);
+      setOptionalAttribute<InitializeBlock>(node, "initializeBlock", audioBlockFormat);
       setOptionalElement<Order>(node, "order", audioBlockFormat);
       setOptionalElement<Degree>(node, "degree", audioBlockFormat);
       setOptionalElement<NfcRefDist>(node, "nfcRefDist", audioBlockFormat);
@@ -893,6 +902,9 @@ namespace adm {
                                   &parseTimecode);
       setOptionalAttribute<Duration>(node, "duration", audioBlockFormat,
                                      &parseTimecode);
+      setOptionalAttribute<Lstart>(node, "lstart", audioBlockFormat, &parseTimecode);
+      setOptionalAttribute<Lduration>(node, "lduration", audioBlockFormat, &parseTimecode);
+      setOptionalAttribute<InitializeBlock>(node, "initializeBlock", audioBlockFormat);
       setOptionalElement<Gain>(node, "gain", audioBlockFormat, &parseGain);
       setOptionalElement<Importance>(node, "importance", audioBlockFormat);
 
