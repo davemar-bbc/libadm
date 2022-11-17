@@ -202,11 +202,12 @@ namespace adm {
         const AudioTrackUidId &trackUidId) const;
     ///@}
 
-   private:
+   protected:
     ADM_EXPORT Document();
     ADM_EXPORT Document(const Document &) = default;
     ADM_EXPORT Document(Document &&) = default;
 
+   private:
     ADM_EXPORT ElementRange<const AudioProgramme> getElements(
         detail::ParameterTraits<AudioProgramme>::tag) const;
     ADM_EXPORT ElementRange<const AudioContent> getElements(
