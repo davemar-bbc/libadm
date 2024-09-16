@@ -9,6 +9,8 @@
 
 #include <algorithm>
 
+#include <iostream>
+
 namespace adm {
   namespace detail {
     template class OptionalParameter<Version>;
@@ -215,6 +217,12 @@ namespace adm {
     }
   }
 
+  bool Document::add(std::shared_ptr<ProfileList> profileList) {
+    // Attorney here?
+    profileList_ = profileList;
+    return true;
+  }
+
   // ---- remove elements --- //
   bool Document::remove(std::shared_ptr<AudioProgramme> programme) {
     auto it =
@@ -361,6 +369,11 @@ namespace adm {
     return false;
   }
 
+  bool Document::remove(std::shared_ptr<ProfileList> profileList) {
+    profileList_ = nullptr;  // Probably need something nicer
+    return true;
+  }
+
   // ---- get elements ---- //
   ElementRange<const AudioProgramme> Document::getElements(
       detail::ParameterTraits<AudioProgramme>::tag) const {
@@ -402,6 +415,11 @@ namespace adm {
     return detail::makeElementRange<AudioTrackUid>(audioTrackUids_);
   }
 
+  std::shared_ptr<const ProfileList> Document::getElement(
+      detail::ParameterTraits<ProfileList>::tag) const {
+    return std::shared_ptr<ProfileList>(profileList_);
+  }
+
   ElementRange<AudioProgramme> Document::getElements(
       detail::ParameterTraits<AudioProgramme>::tag) {
     return detail::makeElementRange<AudioProgramme>(audioProgrammes_);
@@ -440,6 +458,13 @@ namespace adm {
   ElementRange<AudioTrackUid> Document::getElements(
       detail::ParameterTraits<AudioTrackUid>::tag) {
     return detail::makeElementRange<AudioTrackUid>(audioTrackUids_);
+  }
+
+  std::shared_ptr<ProfileList> Document::getElement(
+      detail::ParameterTraits<ProfileList>::tag) {
+    auto profiles = profileList_->get<Profiles>();
+    //std::cout << "getElement<ProfileList>: " << profiles.size() << std::endl;
+    return std::shared_ptr<ProfileList>(profileList_);
   }
 
   // ---- lookup elements ---- //

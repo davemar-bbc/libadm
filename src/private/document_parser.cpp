@@ -84,6 +84,9 @@ namespace adm {
             add(parseAudioStreamFormat(node));
           } else if (nodeName == "audioTrackFormat") {
             add(parseAudioTrackFormat(node));
+          } else if (nodeName == "profileList") {
+            // Can't use the local add function as that contains an ID setting
+            document_->add(std::make_shared<ProfileList>(parseProfileList(node)));
           }
         }
         resolveReferences(programmeContentRefs_);
