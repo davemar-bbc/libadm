@@ -26,3 +26,6 @@ target_link_libraries(create_sadm_from_scratch PRIVATE adm)
 
 add_executable(parse_sadm_xml parse_sadm_xml.cpp)
 target_link_libraries(parse_sadm_xml PRIVATE adm)
+
+add_executable(tag_layers tag_layers.cpp)
+target_link_libraries(tag_layers PRIVATE adm)
