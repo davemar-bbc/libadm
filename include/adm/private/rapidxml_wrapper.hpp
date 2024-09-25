@@ -272,8 +272,10 @@ namespace adm {
     void XmlNode::addBaseElement(const Source &src, const std::string &name,
                                   Callable formatter) {
       auto admElement = src->template getElement<ElementType>();
-      auto node = addNode(name);
-      formatter(node, *admElement);
+      if (admElement) {
+        auto node = addNode(name);
+        formatter(node, *admElement);
+      }
     }
 
 

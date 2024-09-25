@@ -41,6 +41,7 @@ namespace adm {
     ADM_EXPORT void print(std::ostream& os) const;
 
     using detail::TTagBase::set;
+    using detail::TTagBase::unset;
     using detail::AddWrapperMethods<TTag>::get;
     using detail::AddWrapperMethods<TTag>::has;
     using detail::AddWrapperMethods<TTag>::isDefault;
