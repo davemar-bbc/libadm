@@ -413,7 +413,7 @@ namespace adm {
         auto prevId = previousBlock->template get<AudioBlockFormatId>();
         int expectedCounterValue =
             prevId.template get<AudioBlockFormatIdCounter>().get() + 1;
-        if (thisCounterValue != expectedCounterValue)
+        if (thisCounterValue < expectedCounterValue)
           throw std::runtime_error("Invalid ID - unexpected counter");
       }
     }
