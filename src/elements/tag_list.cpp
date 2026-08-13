@@ -1,91 +1,102 @@
 #include "adm/elements/tag_list.hpp"
+#include <algorithm>
 
 namespace adm {
-  TTag::TTag(const char* s) {
+  Tag::Tag(const char* s) {
     // to avoid UB from std::string
     if (!s) {
       throw error::AdmGenericRuntimeError{
           "Cannot construct Tag from null const char*"};
     }
-    set(TTagValue{std::string{s}});
+    set(TagValue{std::string{s}});
+  }
+
+  template <typename T>
+  bool add_reference(std::vector<std::shared_ptr<T>>& references,
+                     std::shared_ptr<T> ref) {
+    auto it = std::find(references.begin(), references.end(), ref);
+    if (it == references.end()) {
+      references.push_back(ref);
+      return true;
+    }
+    return false;
   }
 
   // ---- References ---- //
   bool TagGroup::addReference(std::shared_ptr<AudioProgramme> programme) {
-    auto it =
-        std::find(audioProgrammes_.begin(), audioProgrammes_.end(), programme);
-    if (it == audioProgrammes_.end()) {
-      audioProgrammes_.push_back(std::move(programme));
-      return true;
-    } else {
-      return false;
-    }
+    return add_reference(audioProgrammes_, std::move(programme));
   }
 
   bool TagGroup::addReference(std::shared_ptr<AudioContent> content) {
-    auto it = std::find(audioContents_.begin(), audioContents_.end(), content);
-    if (it == audioContents_.end()) {
-      audioContents_.push_back(std::move(content));
-      return true;
-    } else {
-      return false;
-    }
+    return add_reference(audioContents_, std::move(content));
   }
 
   bool TagGroup::addReference(std::shared_ptr<AudioObject> object) {
-    auto it = std::find(audioObjects_.begin(), audioObjects_.end(), object);
-    if (it == audioObjects_.end()) {
-      audioObjects_.push_back(std::move(object));
-      return true;
-    } else {
-      return false;
+    return add_reference(audioObjects_, std::move(object));
+  }
+
+  template <typename T>
+  TagGroup::RemoveResult remove_reference(
+      std::vector<std::shared_ptr<T>>& references,
+      std::shared_ptr<T> const& ref) {
+    auto it = std::find(references.begin(), references.end(), ref);
+    if (it == references.end()) {
+      return TagGroup::RemoveResult::NotFound;
     }
+    references.erase(it);
+    return TagGroup::RemoveResult::Success;
   }
 
-  void TagGroup::removeReference(std::shared_ptr<AudioProgramme> programme) {
-    auto it =
-        std::find(audioProgrammes_.begin(), audioProgrammes_.end(), programme);
-    if (it != audioProgrammes_.end()) {
-      audioProgrammes_.erase(it);
+  TagGroup::RemoveResult TagGroup::removeReference(
+      std::shared_ptr<AudioProgramme> programme) {
+    if (remove_reference(audioProgrammes_, programme) ==
+        RemoveResult::NotFound) {
+      return RemoveResult::NotFound;
     }
-  }
-
-  void TagGroup::removeReference(std::shared_ptr<AudioContent> content) {
-    auto it = std::find(audioContents_.begin(), audioContents_.end(), content);
-    if (it != audioContents_.end()) {
-      audioContents_.erase(it);
+    if (invalid()) {
+      addReference(std::move(programme));
+      return RemoveResult::LastReferenceError;
     }
+    return RemoveResult::Success;
   }
 
-  void TagGroup::removeReference(std::shared_ptr<AudioObject> object) {
-    auto it = std::find(audioObjects_.begin(), audioObjects_.end(), object);
-    if (it != audioObjects_.end()) {
-      audioObjects_.erase(it);
+  TagGroup::RemoveResult TagGroup::removeReference(
+      std::shared_ptr<AudioContent> content) {
+    if (remove_reference(audioContents_, content) == RemoveResult::NotFound) {
+      return RemoveResult::NotFound;
     }
+    if (invalid()) {
+      addReference(std::move(content));
+      return RemoveResult::LastReferenceError;
+    }
+    return RemoveResult::Success;
   }
 
-  void TagGroup::disconnectReferences() {
-    clearReferences<AudioProgramme>();
-    clearReferences<AudioContent>();
-    clearReferences<AudioObject>();
+  TagGroup::RemoveResult TagGroup::removeReference(
+      std::shared_ptr<AudioObject> object) {
+    if (remove_reference(audioObjects_, object) == RemoveResult::NotFound) {
+      return RemoveResult::NotFound;
+    }
+    if (invalid()) {
+      addReference(std::move(object));
+      return RemoveResult::LastReferenceError;
+    }
+    return RemoveResult::Success;
   }
 
-  void TagGroup::clearReferences(detail::ParameterTraits<AudioProgramme>::tag) {
-    audioProgrammes_.clear();
+  bool TagGroup::invalid() const {
+    return audioContents_.empty() && audioObjects_.empty() &&
+           audioProgrammes_.empty();
   }
 
-  void TagGroup::clearReferences(detail::ParameterTraits<AudioContent>::tag) {
-    audioContents_.clear();
-  }
-
-  void TagGroup::clearReferences(detail::ParameterTraits<AudioObject>::tag) {
-    audioObjects_.clear();
+  bool TagList::add(TagGroup group) {
+    return detail::TagListBase::add(std::move(group));
   }
 
   namespace detail {
-    template class RequiredParameter<TTagValue>;
-    template class OptionalParameter<TTagClass>;
-    template class VectorParameter<TTags>;
+    template class RequiredParameter<TagValue>;
+    template class OptionalParameter<TagClass>;
+    template class VectorParameter<Tags>;
     template class VectorParameter<TagGroups>;
   }  // namespace detail
 }  // namespace adm

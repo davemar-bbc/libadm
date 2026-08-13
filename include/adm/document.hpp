@@ -20,19 +20,29 @@ namespace adm {
   namespace detail {
     extern template class ADM_EXPORT_TEMPLATE_METHODS
         OptionalParameter<Version>;
+    extern template class ADM_EXPORT_TEMPLATE_METHODS
+        OptionalParameter<TagList>;
+    extern template class ADM_EXPORT_TEMPLATE_METHODS
+        OptionalParameter<ProfileList>;
 
-    using DocumentBase = HasParameters<OptionalParameter<Version>>;
+    using DocumentBase =
+        HasParameters<OptionalParameter<Version>, OptionalParameter<TagList>,
+                      OptionalParameter<ProfileList>>;
   }  // namespace detail
 
   /**
    * @brief Class representation of a whole ADM document
    *
    * \rst
-   * +---------------+-----------------+----------------------------+
-   * | ADM Parameter | Parameter Type  | Pattern Type               |
-   * +===============+=================+============================+
-   * | version       | :type:`Version` | :class:`OptionalParameter` |
-   * +---------------+-----------------+----------------------------+
+   * +---------------+---------------------+----------------------------+
+   * | ADM Parameter | Parameter Type      | Pattern Type               |
+   * +===============+=====================+============================+
+   * | version       | :type:`Version`     | :class:`OptionalParameter` |
+   * +---------------+---------------------+----------------------------+
+   * | tagList       | :type:`TagList`     | :class:`OptionalParameter` |
+   * +---------------+---------------------+----------------------------+
+   * | profileList   | :type:`ProfileList` | :class:`OptionalParameter` |
+   * +---------------+---------------------+----------------------------+
    * \endrst
    *
    * Note that:
@@ -80,16 +90,21 @@ namespace adm {
     ADM_EXPORT bool add(std::shared_ptr<AudioTrackFormat> trackFormat);
     /// @brief Add an AudioTrackUid
     ADM_EXPORT bool add(std::shared_ptr<AudioTrackUid> trackUid);
-    /// @brief Add a profileList
-    ADM_EXPORT bool add(std::shared_ptr<ProfileList> profileList);
-    /// @brief Add a tagList
-    ADM_EXPORT bool add(std::shared_ptr<TagList> tagList);
     ///@}
 
     /** @name Remove ADM elements
      *
      * References from and to the ADM element will automatically be removed
      * too.
+     *
+     * Additional side effects:
+     * - removing an AudioProgramme, AudioContent, or AudioObject prunes
+     *   TagGroup entries in tagList that reference the removed element
+     * - If the TagList becomes empty due to pruning, the list itself is
+     *   removed as it is only valid when it contains 1 or more TagGroups
+     * - removing an AudioPackFormat or AudioObject also removes matching
+     *   renderer/referenceLayout ID references in nested
+     *   authoringInformation/loudnessMetadata structures.
      */
     ///@{
     /// @brief Remove an AudioProgramme
@@ -108,10 +123,6 @@ namespace adm {
     ADM_EXPORT bool remove(std::shared_ptr<AudioTrackFormat> trackFormat);
     /// @brief Remove an AudioTrackUid
     ADM_EXPORT bool remove(std::shared_ptr<AudioTrackUid> trackUid);
-    /// @brief Remove a profileList
-    ADM_EXPORT bool remove(std::shared_ptr<ProfileList> profileList);
-    /// @brief Remove a tagList
-    ADM_EXPORT bool remove(std::shared_ptr<TagList> tagList);
     ///@}
 
     /**
@@ -133,12 +144,6 @@ namespace adm {
      */
     template <typename Element>
     ElementRange<Element> getElements();
-
-    template <typename Element>
-    std::shared_ptr<const Element> getElement() const;
-
-    template <typename Element>
-    std::shared_ptr<Element> getElement();
 
     /** @name Lookup ADM elements by its Id
      *
@@ -250,6 +255,23 @@ namespace adm {
     using detail::AddWrapperMethods<Document>::isDefault;
     using detail::AddWrapperMethods<Document>::unset;
 
+    /**
+     * @brief Set the document's tagList.
+     *
+     * Each TagGroup's audioProgramme/audioContent/audioObject references are
+     * validated against the document:
+     *   * if a referenced element already belongs to a *different* document,
+     *     the document is left unmodified and `false` is returned;
+     *   * if a referenced element is not yet attached to any document, it is
+     *     added to this document (mirroring the auto-add behaviour of
+     *     `Document::add(...)` for nested references);
+     *   * elements already belonging to this document are left untouched.
+     *
+     * @return `true` on success, `false` if any reference belongs to another
+     * document.
+     */
+    ADM_EXPORT bool set(TagList tagList);
+
    private:
     ADM_EXPORT Document();
     ADM_EXPORT Document(const Document &) = default;
@@ -271,10 +293,6 @@ namespace adm {
         detail::ParameterTraits<AudioTrackFormat>::tag) const;
     ADM_EXPORT ElementRange<const AudioTrackUid> getElements(
         detail::ParameterTraits<AudioTrackUid>::tag) const;
-    ADM_EXPORT std::shared_ptr<const ProfileList> getElement(
-        detail::ParameterTraits<ProfileList>::tag) const;
-    ADM_EXPORT std::shared_ptr<const TagList> getElement(
-        detail::ParameterTraits<TagList>::tag) const;
     ADM_EXPORT ElementRange<AudioProgramme> getElements(
         detail::ParameterTraits<AudioProgramme>::tag);
     ADM_EXPORT ElementRange<AudioContent> getElements(
@@ -291,10 +309,6 @@ namespace adm {
         detail::ParameterTraits<AudioTrackFormat>::tag);
     ADM_EXPORT ElementRange<AudioTrackUid> getElements(
         detail::ParameterTraits<AudioTrackUid>::tag);
-    ADM_EXPORT std::shared_ptr<ProfileList> getElement(
-        detail::ParameterTraits<ProfileList>::tag);
-    ADM_EXPORT std::shared_ptr<TagList> getElement(
-        detail::ParameterTraits<TagList>::tag);
 
     /// check the parent of an element
     ///
@@ -322,8 +336,6 @@ namespace adm {
     std::vector<std::shared_ptr<AudioStreamFormat>> audioStreamFormats_;
     std::vector<std::shared_ptr<AudioTrackFormat>> audioTrackFormats_;
     std::vector<std::shared_ptr<AudioTrackUid>> audioTrackUids_;
-    std::shared_ptr<ProfileList> profileList_;
-    std::shared_ptr<TagList> tagList_;
     detail::IdAssigner idAssigner_;
   };
 
@@ -340,17 +352,4 @@ namespace adm {
     typedef typename detail::ParameterTraits<Element>::tag Tag;
     return getElements(Tag());
   }
-
-  template <typename Element>
-  std::shared_ptr<const Element> Document::getElement() const {
-    typedef typename detail::ParameterTraits<Element>::tag Tag;
-    return getElement(Tag());
-  }
-
-  template <typename Element>
-  std::shared_ptr<Element> Document::getElement() {
-    typedef typename detail::ParameterTraits<Element>::tag Tag;
-    return getElement(Tag());
-  }
-
 }  // namespace adm

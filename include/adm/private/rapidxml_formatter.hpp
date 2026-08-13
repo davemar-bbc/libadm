@@ -57,7 +57,7 @@ namespace adm {
     void formatProfile(XmlNode &node, const Profile &profile);
     void formatTagList(XmlNode &node, const TagList &tagList);
     void formatTagGroup(XmlNode &node, const TagGroup &tagGroup);
-    void formatTag(XmlNode &node, const TTag &tag);
+    void formatTag(XmlNode &node, const Tag &tag);
 
     void formatBlockFormatDirectSpeakers(
         XmlNode &node, const AudioBlockFormatDirectSpeakers &audioBlock,

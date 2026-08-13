@@ -78,6 +78,46 @@ namespace adm {
 
     }  // namespace detail
 
+    void formatAudioProgrammeReferenceScreen(
+        XmlNode &node, const AudioProgrammeReferenceScreen &screen) {
+      node.addOptionalAttribute<CoordinateMode>(&screen, "coordinateMode");
+    }
+
+    template <typename T>
+    void formatRendererCommon(XmlNode &node, const T &renderer) {
+      node.addOptionalAttribute<RendererUri>(&renderer, "uri");
+      node.addOptionalAttribute<RendererName>(&renderer, "name");
+      node.addOptionalAttribute<RendererVersion>(&renderer, "version");
+      node.addOptionalAttribute<CoordinateMode>(&renderer, "coordinateMode");
+      for (auto const &packRef :
+           renderer.template get<RendererPackFormatIdRefs>()) {
+        node.addElement("audioPackFormatIDRef",
+                        formatId(packRef->template get<AudioPackFormatId>()));
+      }
+    }
+
+    void formatAuthoringRenderer(XmlNode &node,
+                                 const AuthoringRenderer &renderer) {
+      formatRendererCommon(node, renderer);
+    }
+
+    void formatReferenceLayout(XmlNode &node, const ReferenceLayout &layout) {
+      node.addElement("audioPackFormatIDRef",
+                      formatId(layout.get()->get<AudioPackFormatId>()));
+    }
+
+    void formatAuthoringInformation(XmlNode &node,
+                                    const AuthoringInformation &info) {
+      for (auto const &layout : info.get<ReferenceLayouts>()) {
+        auto layoutNode = node.addNode("referenceLayout");
+        formatReferenceLayout(layoutNode, layout);
+      }
+      for (auto const &renderer : info.get<Renderers>()) {
+        auto rendererNode = node.addNode("renderer");
+        formatAuthoringRenderer(rendererNode, renderer);
+      }
+    }
+
     void formatAudioProgramme(
         XmlNode &node, const std::shared_ptr<const AudioProgramme> programme) {
       // clang-format off
@@ -89,8 +129,19 @@ namespace adm {
       node.addOptionalAttribute<MaxDuckingDepth>(programme, "maxDuckingDepth");
       node.addReferences<AudioContent, AudioContentId>(programme, "audioContentIDRef");
       node.addVectorElements<LoudnessMetadatas>(programme, "loudnessMetadata", &formatLoudnessMetadata);
+      node.addOptionalElement<AuthoringInformation>(programme, "authoringInformation", &formatAuthoringInformation);
+      node.addOptionalElement<AudioProgrammeReferenceScreen>(programme, "audioProgrammeReferenceScreen", &formatAudioProgrammeReferenceScreen);
       node.addVectorElements<Labels>(programme, "audioProgrammeLabel", &formatLabel);
       // clang-format on
+    }
+
+    void formatLoudnessRenderer(XmlNode &node,
+                                const LoudnessRenderer &renderer) {
+      formatRendererCommon(node, renderer);
+      for (auto const &objectRef : renderer.get<RendererObjectIdRefs>()) {
+        node.addElement("audioObjectIDRef",
+                        formatId(objectRef->get<AudioObjectId>()));
+      }
     }
 
     void formatLoudnessMetadata(XmlNode &node,
@@ -110,6 +161,8 @@ namespace adm {
       node.addOptionalElement<MaxShortTerm>(&loudnessMetadata, "maxShortTerm");
       node.addOptionalElement<DialogueLoudness>(&loudnessMetadata,
                                                 "dialogueLoudness");
+      node.addOptionalElement<LoudnessRenderer>(&loudnessMetadata, "renderer",
+                                                &formatLoudnessRenderer);
     }
 
     void formatAudioContent(XmlNode &node,
@@ -349,6 +402,7 @@ namespace adm {
       if(audioBlock.has<CartesianSpeakerPosition>()) {
         node.addMultiElement<CartesianSpeakerPosition>(&audioBlock, "position", &formatCartesianSpeakerPosition);
       }
+      node.addOptionalElement<Cartesian>(&audioBlock, "cartesian");
 
       node.addOptionalElement<HeadLocked>(&audioBlock, "headLocked");
       node.addOptionalElement<HeadphoneVirtualise>(&audioBlock, "headphoneVirtualise", &formatHeadphoneVirtualise);
@@ -795,7 +849,7 @@ namespace adm {
     }
 
     void formatTagGroup(XmlNode &node, const TagGroup &tagGroup) {
-      node.addVectorElements<TTags>(&tagGroup, "tag", &formatTag);
+      node.addVectorElements<Tags>(&tagGroup, "tag", &formatTag);
       node.addReferences<AudioProgramme, AudioProgrammeId>(
           &tagGroup, "audioProgrammeIDRef");
       node.addReferences<AudioContent, AudioContentId>(&tagGroup,
@@ -804,9 +858,9 @@ namespace adm {
                                                      "audioObjectIDRef");
     }
 
-    void formatTag(XmlNode &node, const TTag &tag) {
-      node.setValue(tag.get<TTagValue>());
-      node.addAttribute<TTagClass>(&tag, "class");
+    void formatTag(XmlNode &node, const Tag &tag) {
+      node.setValue(tag.get<TagValue>());
+      node.addOptionalAttribute<TagClass>(&tag, "class");
     }
 
   }  // namespace xml

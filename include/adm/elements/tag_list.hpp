@@ -8,84 +8,102 @@
 #include "adm/errors.hpp"
 
 namespace adm {
-  struct TTagValueTag {};
-  using TTagValue = detail::NamedType<std::string, TTagValueTag>;
 
-  struct TTagClassTag {};
-  using TTagClass = detail::NamedType<std::string, TTagClassTag>;
+  class TagList;
 
-  struct TTagTag {};
+  struct TagValueTag {};
+  using TagValue = detail::NamedType<std::string, TagValueTag>;
+
+  struct TagClassTag {};
+  using TagClass = detail::NamedType<std::string, TagClassTag>;
+
+  struct TagTag {};
 
   namespace detail {
     extern template class ADM_EXPORT_TEMPLATE_METHODS
-        RequiredParameter<TTagValue>;
+        RequiredParameter<TagValue>;
     extern template class ADM_EXPORT_TEMPLATE_METHODS
-        OptionalParameter<TTagClass>;
+        OptionalParameter<TagClass>;
 
-    using TTagBase = HasParameters<RequiredParameter<TTagValue>,
-                                   OptionalParameter<TTagClass>>;
+    using TagBase =
+        HasParameters<RequiredParameter<TagValue>, OptionalParameter<TagClass>>;
   }  // namespace detail
 
-  class TTag : private detail::TTagBase,
-               private detail::AddWrapperMethods<TTag> {
+  class Tag : private detail::TagBase, private detail::AddWrapperMethods<Tag> {
    public:
-    using tag = TTagTag;
+    using tag = TagTag;
 
     template <typename... Parameters>
-    explicit TTag(Parameters... namedArgs) {
+    explicit Tag(Parameters... namedArgs) {
       detail::setNamedOptionHelper(this, std::move(namedArgs)...);
     }
 
-    ADM_EXPORT explicit TTag(std::string str)
-        : TTag(TTagValue(std::move(str))) {}
-    ADM_EXPORT explicit TTag(const char *s);
+    ADM_EXPORT explicit Tag(std::string str) : Tag(TagValue(std::move(str))) {}
+    ADM_EXPORT explicit Tag(const char *s);
 
     ADM_EXPORT void print(std::ostream &os) const;
 
-    using detail::TTagBase::set;
-    using detail::TTagBase::unset;
-    using detail::AddWrapperMethods<TTag>::get;
-    using detail::AddWrapperMethods<TTag>::has;
-    using detail::AddWrapperMethods<TTag>::isDefault;
-    using detail::AddWrapperMethods<TTag>::unset;
+    using detail::TagBase::set;
+    using detail::TagBase::unset;
+    using detail::AddWrapperMethods<Tag>::get;
+    using detail::AddWrapperMethods<Tag>::has;
+    using detail::AddWrapperMethods<Tag>::isDefault;
+    using detail::AddWrapperMethods<Tag>::unset;
 
    private:
-    using detail::TTagBase::get;
-    using detail::TTagBase::has;
+    using detail::TagBase::get;
+    using detail::TagBase::has;
 
-    friend class detail::AddWrapperMethods<TTag>;
+    friend class detail::AddWrapperMethods<Tag>;
   };
 
-  struct TTagsTag {};
+  struct TagsTag {};
 
-  using TTags = std::vector<TTag>;
-  ADD_TRAIT(TTags, TTagsTag);
+  using Tags = std::vector<Tag>;
+  ADD_TRAIT(Tags, TagsTag);
 
-  inline bool operator==(const TTag &a, const TTag &b) {
-    return detail::optionalsEqual<TTagValue, TTagClass>(a, b);
+  inline bool operator==(const Tag &a, const Tag &b) {
+    return detail::optionalsEqual<TagValue, TagClass>(a, b);
   }
 
-  inline bool operator!=(const TTag &a, const TTag &b) { return !(a == b); }
+  inline bool operator!=(const Tag &a, const Tag &b) { return !(a == b); }
 
   struct TagGroupTag {};
 
   namespace detail {
-    extern template class ADM_EXPORT_TEMPLATE_METHODS VectorParameter<TTags>;
+    extern template class ADM_EXPORT_TEMPLATE_METHODS VectorParameter<Tags>;
 
-    using TagGroupBase = HasParameters<VectorParameter<TTags>>;
+    using TagGroupBase = HasParameters<VectorParameter<Tags>>;
   }  // namespace detail
 
   class TagGroup : private detail::TagGroupBase,
                    private detail::AddWrapperMethods<TagGroup> {
    public:
+    enum class RemoveResult {
+      Success,
+      LastReferenceError,  // A TagGroup must always have at least one reference
+      NotFound
+    };
     using tag = TagGroupTag;
 
-    // DEBUG FUNCTIONS
-    int getTempId() { return temp_id_; };
-    void setTempId(int n) { temp_id_ = n; };
+    TagGroup() = default;
 
     template <typename... Parameters>
-    explicit TagGroup(Parameters... namedArgs) {
+    explicit TagGroup(std::shared_ptr<AudioObject> const &reference,
+                      Parameters... namedArgs) {
+      addReference(reference);
+      detail::setNamedOptionHelper(this, std::move(namedArgs)...);
+    }
+    template <typename... Parameters>
+    explicit TagGroup(std::shared_ptr<AudioContent> const &reference,
+                      Parameters... namedArgs) {
+      addReference(reference);
+      detail::setNamedOptionHelper(this, std::move(namedArgs)...);
+    }
+    template <typename... Parameters>
+    explicit TagGroup(std::shared_ptr<AudioProgramme> const &reference,
+                      Parameters... namedArgs) {
+      addReference(reference);
       detail::setNamedOptionHelper(this, std::move(namedArgs)...);
     }
 
@@ -105,34 +123,44 @@ namespace adm {
     ElementRange<const Element> getReferences() const;
 
     /// @brief Remove reference to an AudioProgramme
-    ADM_EXPORT void removeReference(std::shared_ptr<AudioProgramme> programme);
+    ADM_EXPORT RemoveResult
+    removeReference(std::shared_ptr<AudioProgramme> programme);
 
     /// @brief Remove reference to an AudioContent
-    ADM_EXPORT void removeReference(std::shared_ptr<AudioContent> content);
+    ADM_EXPORT RemoveResult
+    removeReference(std::shared_ptr<AudioContent> content);
 
     /// @brief Remove reference to an AudioObject
-    ADM_EXPORT void removeReference(std::shared_ptr<AudioObject> object);
+    ADM_EXPORT RemoveResult
+    removeReference(std::shared_ptr<AudioObject> object);
 
     template <typename Element>
     void clearReferences();
 
-    using detail::TagGroupBase::set;
-    using detail::AddWrapperMethods<TagGroup>::get;
-    using detail::AddWrapperMethods<TagGroup>::has;
-    using detail::AddWrapperMethods<TagGroup>::isDefault;
-    using detail::AddWrapperMethods<TagGroup>::unset;
+    using AddWrapperMethods::get;
+    using AddWrapperMethods::has;
+    using AddWrapperMethods::isDefault;
+    using AddWrapperMethods::unset;
     using detail::TagGroupBase::add;
     using detail::TagGroupBase::remove;
+    using detail::TagGroupBase::set;
+
+    template <typename T>
+    bool has() const {
+      return has(typename detail::ParameterTraits<T>::tag{});
+    }
 
    private:
-    int temp_id_;
-
     using detail::TagGroupBase::get;
     using detail::TagGroupBase::has;
     using detail::TagGroupBase::isDefault;
     using detail::TagGroupBase::unset;
 
     friend class detail::AddWrapperMethods<TagGroup>;
+    friend class Document;
+    friend class TagList;
+
+    bool invalid() const;
 
     ADM_EXPORT ElementRange<const AudioProgramme> getReferences(
         detail::ParameterTraits<AudioProgramme>::tag) const;
@@ -147,20 +175,22 @@ namespace adm {
     ADM_EXPORT ElementRange<AudioObject> getReferences(
         detail::ParameterTraits<AudioObject>::tag);
 
-    ADM_EXPORT void clearReferences(
-        detail::ParameterTraits<AudioProgramme>::tag);
-    ADM_EXPORT void clearReferences(detail::ParameterTraits<AudioContent>::tag);
-    ADM_EXPORT void clearReferences(detail::ParameterTraits<AudioObject>::tag);
-
-    ADM_EXPORT void disconnectReferences();
-
     std::vector<std::shared_ptr<AudioProgramme>> audioProgrammes_;
     std::vector<std::shared_ptr<AudioContent>> audioContents_;
     std::vector<std::shared_ptr<AudioObject>> audioObjects_;
   };
 
   inline bool operator==(const TagGroup &a, const TagGroup &b) {
-    return detail::optionalsEqual<TTags>(a, b);
+    return detail::optionalsEqual<Tags>(a, b) &&
+           detail::elementRangeEqual<AudioObject const>(
+               a.getReferences<AudioObject>(),
+               b.getReferences<AudioObject>()) &&
+           detail::elementRangeEqual<AudioProgramme>(
+               a.getReferences<AudioProgramme>(),
+               b.getReferences<AudioProgramme>()) &&
+           detail::elementRangeEqual<AudioContent>(
+               a.getReferences<AudioContent>(),
+               b.getReferences<AudioContent>());
   }
 
   inline bool operator!=(const TagGroup &a, const TagGroup &b) {
@@ -181,32 +211,38 @@ namespace adm {
 
   inline ElementRange<const AudioProgramme> TagGroup::getReferences(
       detail::ParameterTraits<AudioProgramme>::tag) const {
-    return detail::makeElementRange<AudioProgramme>(audioProgrammes_);
-  }
-
-  inline ElementRange<AudioProgramme> TagGroup::getReferences(
-      detail::ParameterTraits<AudioProgramme>::tag) {
-    return detail::makeElementRange<AudioProgramme>(audioProgrammes_);
+    return ElementRange<const AudioProgramme>(audioProgrammes_.begin(),
+                                              audioProgrammes_.end());
   }
 
   inline ElementRange<const AudioContent> TagGroup::getReferences(
       detail::ParameterTraits<AudioContent>::tag) const {
-    return detail::makeElementRange<AudioContent>(audioContents_);
-  }
-
-  inline ElementRange<AudioContent> TagGroup::getReferences(
-      detail::ParameterTraits<AudioContent>::tag) {
-    return detail::makeElementRange<AudioContent>(audioContents_);
+    return ElementRange<const AudioContent>(audioContents_.begin(),
+                                            audioContents_.end());
   }
 
   inline ElementRange<const AudioObject> TagGroup::getReferences(
       detail::ParameterTraits<AudioObject>::tag) const {
-    return detail::makeElementRange<AudioObject>(audioObjects_);
+    return ElementRange<const AudioObject>(audioObjects_.begin(),
+                                           audioObjects_.end());
+  }
+
+  inline ElementRange<AudioProgramme> TagGroup::getReferences(
+      detail::ParameterTraits<AudioProgramme>::tag) {
+    return ElementRange<AudioProgramme>(audioProgrammes_.begin(),
+                                        audioProgrammes_.end());
+  }
+
+  inline ElementRange<AudioContent> TagGroup::getReferences(
+      detail::ParameterTraits<AudioContent>::tag) {
+    return ElementRange<AudioContent>(audioContents_.begin(),
+                                      audioContents_.end());
   }
 
   inline ElementRange<AudioObject> TagGroup::getReferences(
       detail::ParameterTraits<AudioObject>::tag) {
-    return detail::makeElementRange<AudioObject>(audioObjects_);
+    return ElementRange<AudioObject>(audioObjects_.begin(),
+                                     audioObjects_.end());
   }
 
   template <typename Element>
@@ -230,22 +266,28 @@ namespace adm {
   struct TagListTag {};
 
   class TagList : private detail::TagListBase,
-                  private detail::AddWrapperMethods<TagList> {
+                  private detail::AddWrapperMethods<TagList>,
+                  public std::enable_shared_from_this<TagList> {
    public:
-    using tag = TagListTag;
-
     template <typename... Parameters>
-    explicit TagList(Parameters... namedArgs) {
-      detail::setNamedOptionHelper(this, std::move(namedArgs)...);
+    std::shared_ptr<TagList> create(Parameters... namedArgs) {
+      return std::make_shared<TagList>(
+          std::forward<Parameters...>(namedArgs...));
     }
-
+    using tag = TagListTag;
     using detail::TagListBase::set;
     using detail::AddWrapperMethods<TagList>::get;
     using detail::AddWrapperMethods<TagList>::has;
     using detail::AddWrapperMethods<TagList>::isDefault;
     using detail::AddWrapperMethods<TagList>::unset;
-    using detail::TagListBase::add;
     using detail::TagListBase::remove;
+
+    ADM_EXPORT bool add(TagGroup group);
+
+    template <typename... Parameters>
+    explicit TagList(Parameters... namedArgs) {
+      detail::setNamedOptionHelper(this, std::move(namedArgs)...);
+    }
 
    private:
     using detail::TagListBase::get;
