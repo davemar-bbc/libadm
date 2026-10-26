@@ -7,6 +7,7 @@
 #include "adm/utilities/copy.hpp"
 #include "adm/utilities/id_assignment.hpp"
 #include "adm/utilities/block_duration_assignment.hpp"
+
 #include <algorithm>
 #include <set>
 
@@ -28,7 +29,6 @@ namespace adm {
     }
 
     detail::GenericRouteTracer<adm::Route, CustomStrategy> tracer;
-    //RouteTracer tracer;
     for (auto audioProgramme : document_->getElements<AudioProgramme>()) {
       auto routes = tracer.run(audioProgramme);
       for (auto route : routes) {
@@ -91,6 +91,8 @@ namespace adm {
 
     frameHeader_ = std::make_shared<FrameHeader>(frameHeader);
 
+    ElementMapping mapping;
+
     for (auto &item : segmenterItems_) {
       item.use = false;
       uint32_t numBlocks = 0;
@@ -117,10 +119,15 @@ namespace adm {
       }
       std::vector<std::shared_ptr<AudioObject>> objectDests;
       for (auto &object : item.objects) {
-        objectDests.push_back(object->copy());
+        auto object_copied = object->copy();
+        objectDests.push_back(object_copied);
+        mapping.audioObject[object] = object_copied;
       }
       std::shared_ptr<AudioContent> contentDest = item.content->copy();
+      mapping.audioContent[item.content] = contentDest;
+
       std::shared_ptr<AudioProgramme> programmeDest = item.programme->copy();
+      mapping.audioProgramme[item.programme] = programmeDest;
 
       if (channelFormatDest->get<TypeDescriptor>() ==
           TypeDefinition::DIRECT_SPEAKERS) {
@@ -185,6 +192,28 @@ namespace adm {
     }
 
     fixReferences();
+
+    adm::TagList segmentList;
+    auto tagList = document_->get<TagList>();
+    auto groups = tagList.get<TagGroups>();
+    for (auto tagGroup : groups) {
+      boost::optional<TagGroup> segmentedGroup;
+      relinkReferences<AudioProgramme>(tagGroup, *baseFrame_, segmentedGroup);
+      relinkReferences<AudioContent>(tagGroup, *baseFrame_, segmentedGroup);
+      relinkReferences<AudioObject>(tagGroup, *baseFrame_, segmentedGroup);
+      for (auto const& tag : tagGroup.get<Tags>()) segmentedGroup->add(tag);
+      if (segmentedGroup) {
+        segmentList.add(*segmentedGroup);
+      }
+    }
+    baseFrame_->set(segmentList);
+
+    if (document_->has<Version>()) {
+      baseFrame_->set(document_->get<Version>());
+    }
+    if (document_->has<ProfileList>()) {
+      baseFrame_->set(document_->get<ProfileList>());
+    }
   }
 
 

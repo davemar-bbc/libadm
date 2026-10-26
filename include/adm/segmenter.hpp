@@ -335,4 +335,20 @@ namespace adm {
               CompareRtimeDurationLess());
   }
 
+  template<typename T>
+  void relinkReferences(
+    TagGroup sourceGroup,
+    Document &targetDoc,
+    boost::optional<TagGroup>& targetGroup) {
+    for (auto sourceElement : sourceGroup.getReferences<T>()) {
+      if (auto targetElement = targetDoc.lookup(sourceElement->template get<typename T::id_type>())) {
+        if (!targetGroup) {
+          targetGroup = TagGroup();
+          targetGroup->addReference(targetElement);
+        } else {
+          targetGroup->addReference(targetElement);
+        }
+      }
+    }
+  }
 }  // namespace adm
