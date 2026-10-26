@@ -11,7 +11,19 @@
 			</audioTrack>
 		</transportTrackFormat>
 	</frameHeader>
-	<audioFormatExtended>
+	<audioFormatExtended version="ITU-R_BS.2076-3">
+		<profileList>
+			<profile profileName="Test Profile" profileVersion="1" profileLevel="0">Profile XXXX</profile>
+		</profileList>
+		<tagList>
+			<tagGroup>
+				<tag class="Layer">1</tag>
+				<audioProgrammeIDRef>APR_1001</audioProgrammeIDRef>
+				<audioContentIDRef>ACO_1001</audioContentIDRef>
+				<audioContentIDRef>ACO_1002</audioContentIDRef>
+				<audioObjectIDRef>AO_1002</audioObjectIDRef>
+			</tagGroup>
+		</tagList>
 		<audioProgramme audioProgrammeID="APR_1001" audioProgrammeName="Main" start="00:00:00.00000" end="00:00:10.00000">
 			<audioContentIDRef>ACO_1001</audioContentIDRef>
 			<audioContentIDRef>ACO_1002</audioContentIDRef>
