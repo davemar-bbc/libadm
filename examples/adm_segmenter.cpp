@@ -65,7 +65,7 @@ int main(int argc, char const *argv[]) {
 
 std::string genSadmFilename(std::string pref, uint32_t ind) {
   char c[256];
-  sprintf(c, "%s_%04d.xml", pref.c_str(), ind);
+  snprintf(c, 256, "%s_%04d.xml", pref.c_str(), ind);
   std::string s(c);
   return s;
 }
